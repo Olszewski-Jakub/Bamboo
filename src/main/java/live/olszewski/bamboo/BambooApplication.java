@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BambooApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BambooApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(BambooApplication.class, args);
+    }
 }
