@@ -21,17 +21,22 @@ public class SecurityConfig {
     @Autowired
     private FirebaseAuth firebaseAuth;
 
-    @Value("${secured.paths}")
-    private String[] securedPaths;
+    @Value("${secured.paths.get}")
+    private String[] securedPathsGet;
+
+    @Value("${secured.paths.post}")
+    private String[] securedPathsPost;
+    @Value("${secured.paths.delete}")
+    private String[] securedPathsDelete;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
-                authorizeRequests().requestMatchers(HttpMethod.GET, "/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/***").authenticated().and()
+                authorizeRequests().requestMatchers(HttpMethod.GET, securedPathsGet).authenticated()
+                .requestMatchers(HttpMethod.POST, securedPathsPost).authenticated()
+                .requestMatchers(HttpMethod.DELETE, securedPathsDelete).authenticated().and()
                 .addFilterBefore(new FirebaseFilter(firebaseAuth), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
