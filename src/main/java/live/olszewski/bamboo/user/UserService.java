@@ -20,29 +20,29 @@ public class UserService {
     }
 
 
-    public List<User> getUsers() {
+    public List<UserDao> getUsers() {
         return userRepository.findAll();
     }
 
-    public void addNewUser(User registerUser) {
-        Optional<User> userOptional = userRepository.findUserByEmail(registerUser.getEmail());
+    public void addNewUser(RegisterUser registerUser) {
+        Optional<UserDao> userOptional = userRepository.findUserByEmail(registerUser.getEmail());
         if (userOptional.isPresent()) {
             throw new IllegalStateException("User already exists");
         }
-//        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-//                .setEmail(registerUser.getEmail())
-//                .setEmailVerified(false)
-//                .setPassword(registerUser.getPassword())
-//                .setDisplayName(registerUser.getName() + " " + registerUser.getSurname());
+        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+                .setEmail(registerUser.getEmail())
+                .setEmailVerified(false)
+                .setPassword(registerUser.getPassword())
+                .setDisplayName(registerUser.getName() + " " + registerUser.getSurname());
 
-//        try {
-//            UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
-//            User user = new User(userRecord.getUid(), registerUser.getName(), registerUser.getSurname(), registerUser.getEmail());
-            userRepository.save(registerUser);
-            System.out.println(registerUser);
-//        } catch (FirebaseAuthException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
+            UserDao userDao = new UserDao(userRecord.getUid(), registerUser.getName(), registerUser.getSurname(), registerUser.getEmail());
+            userRepository.save(userDao);
+            System.out.println(userDao);
+        } catch (FirebaseAuthException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void deleteUser(Long id) {

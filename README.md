@@ -2,6 +2,6 @@
 
 - User
   - User Authorisation
-  - Add, delete user 
-  - get user info
+  - Add, delete userDao 
+  - get userDao info
 - 

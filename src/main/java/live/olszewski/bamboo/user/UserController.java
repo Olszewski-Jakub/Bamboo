@@ -1,7 +1,6 @@
 package live.olszewski.bamboo.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.web.headers.HeadersSecurityMarker;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +18,12 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getStudents() {
+    public List<UserDao> getStudents() {
         return userService.getUsers();
     }
 
     @PostMapping
-    public void registerNewUser(@RequestBody User user){
+    public void registerNewUser(@RequestBody RegisterUser user){
         userService.addNewUser(user);
     }
 
