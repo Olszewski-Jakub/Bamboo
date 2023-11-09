@@ -9,6 +9,6 @@ import java.util.Optional;
 interface RegisterPandaRepository extends JpaRepository<RegisterPandaDao,Long> {
 
     @Query("SELECT s FROM RegisterPandaDao s WHERE s.uuid = ?1")
-    Optional<UserDao> findDeviceByUUID(String UID);
+    Optional<RegisterPandaDao> findDeviceByUUID(String UID);
 
 }
