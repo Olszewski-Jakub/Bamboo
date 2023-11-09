@@ -1,7 +1,21 @@
 package live.olszewski.bamboo.pandaDevice.register;
 
-public class RegisterPanda {
+import jakarta.persistence.*;
+import live.olszewski.bamboo.uuid.UUIDService;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@Entity
+@Table(name = "panda_device")
+public class RegisterPandaDao {
+
+    @Id
+    @SequenceGenerator(
+            name = "panda_sequence",
+            sequenceName = "panda_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "panda_sequence")
     private Long id;
     private String uuid;
     private String location;
@@ -9,11 +23,11 @@ public class RegisterPanda {
     private Boolean status;
     private Long owner;
 
-    public RegisterPanda() {
+    public RegisterPandaDao() {
 
     }
 
-    public RegisterPanda(Long id, String uuid, String location, String name, Boolean status, Long owner) {
+    public RegisterPandaDao(Long id, String uuid, String location, String name, Boolean status, Long owner) {
         this.id = id;
         this.uuid = uuid;
         this.location = location;
@@ -22,7 +36,8 @@ public class RegisterPanda {
         this.owner = owner;
     }
 
-    public RegisterPanda(String uuid, String location, String name, Boolean status, Long owner) {
+    public RegisterPandaDao(String uuid, String location, String name, Boolean status, Long owner) {
+
         this.uuid = uuid;
         this.location = location;
         this.name = name;
@@ -30,7 +45,12 @@ public class RegisterPanda {
         this.owner = owner;
 
     }
-
+    public RegisterPandaDao(String location, String name, Boolean status, Long owner) {
+        this.location = location;
+        this.name = name;
+        this.status = status;
+        this.owner = owner;
+    }
     public Long getId() {
         return id;
     }
