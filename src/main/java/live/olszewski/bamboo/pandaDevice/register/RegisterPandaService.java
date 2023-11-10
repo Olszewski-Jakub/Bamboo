@@ -24,7 +24,7 @@ public class RegisterPandaService {
 
     public void addPandaDevice(RegisterPandaDao registerPandaDao) {
         registerPandaDao.setUuid(uuidService.generateUUIDFromString(
-                registerPandaDao.getName() + registerPandaDao.getLocation()
+                registerPandaDao.valuesForUuidGeneration()
         ).toString());
         Optional<RegisterPandaDao> registerPandaDaoOptional = registerPandaRepository.findDeviceByUUID(registerPandaDao.getUuid());
         if (registerPandaDaoOptional.isPresent()) {

@@ -1,8 +1,6 @@
 package live.olszewski.bamboo.pandaDevice.register;
 
 import jakarta.persistence.*;
-import live.olszewski.bamboo.uuid.UUIDService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Table(name = "panda_device")
@@ -45,12 +43,14 @@ public class RegisterPandaDao {
         this.owner = owner;
 
     }
+
     public RegisterPandaDao(String location, String name, Boolean status, Long owner) {
         this.location = location;
         this.name = name;
         this.status = status;
         this.owner = owner;
     }
+
     public Long getId() {
         return id;
     }
@@ -109,5 +109,9 @@ public class RegisterPandaDao {
                 ", status=" + status +
                 ", owner=" + owner +
                 '}';
+    }
+
+    public String valuesForUuidGeneration() {
+        return name + location + owner.toString();
     }
 }
