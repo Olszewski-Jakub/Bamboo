@@ -3,6 +3,7 @@ package live.olszewski.bamboo.user;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final UserStorage userStorage;
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserStorage userStorage) {
         this.userRepository = userRepository;
+        this.userStorage = userStorage;
     }
 
 
@@ -51,5 +53,10 @@ public class UserService {
             throw new IllegalStateException("User with id " + id + " deos not exists");
         }
         userRepository.deleteById(id);
+    }
+
+    public Long getPandaOwner(){
+        UserDao userDao = userRepository.findUserByEmail(userStorage.getCurrentUserEmail()).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
+        return userDao.getId();
     }
 }

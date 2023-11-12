@@ -1,6 +1,7 @@
 package live.olszewski.bamboo.auth;
 
 import com.google.firebase.auth.FirebaseAuth;
+import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,8 @@ public class SecurityConfig {
     @Autowired
     private FirebaseAuth firebaseAuth;
 
+    @Autowired
+    private UserStorage userStorage;
     @Value("${secured.paths.get}")
     private String[] securedPathsGet;
 
@@ -29,6 +32,7 @@ public class SecurityConfig {
     @Value("${secured.paths.delete}")
     private String[] securedPathsDelete;
 
+    //TODO: session management is depracted and marked for removal in Spring Security 6.0. It needs a quick fix to stop future issues
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -37,7 +41,7 @@ public class SecurityConfig {
                 authorizeRequests().requestMatchers(HttpMethod.GET, securedPathsGet).authenticated()
                 .requestMatchers(HttpMethod.POST, securedPathsPost).authenticated()
                 .requestMatchers(HttpMethod.DELETE, securedPathsDelete).authenticated().and()
-                .addFilterBefore(new FirebaseFilter(firebaseAuth), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new FirebaseFilter(userStorage,firebaseAuth), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
