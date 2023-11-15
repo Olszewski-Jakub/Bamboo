@@ -4,7 +4,7 @@ import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.user.UserDao;
 import live.olszewski.bamboo.user.UserRepository;
-import live.olszewski.bamboo.uuid.UUIDService;
+import live.olszewski.bamboo.services.uuid.UUIDService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -3,7 +3,7 @@ package live.olszewski.bamboo.panda.register;
 import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.user.UserService;
-import live.olszewski.bamboo.uuid.UUIDService;
+import live.olszewski.bamboo.services.uuid.UUIDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

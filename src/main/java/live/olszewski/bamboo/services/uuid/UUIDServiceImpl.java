@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.uuid;
+package live.olszewski.bamboo.services.uuid;
 
 import org.springframework.stereotype.Service;
 import java.util.UUID;
