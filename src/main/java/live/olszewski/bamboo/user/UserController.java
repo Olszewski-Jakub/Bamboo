@@ -36,7 +36,7 @@ public class UserController {
                             description = "Unauthorized"
                     )
             })
-    public List<UserDao> getStudents() {
+    public List<UserDto> getStudents() {
         return userService.getUsers();
     }
 

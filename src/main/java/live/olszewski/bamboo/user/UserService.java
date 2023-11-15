@@ -15,6 +15,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserStorage userStorage;
+
     @Autowired
     public UserService(UserRepository userRepository, UserStorage userStorage) {
         this.userRepository = userRepository;
@@ -22,8 +23,8 @@ public class UserService {
     }
 
 
-    public List<UserDao> getUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getUsers() {
+        return userRepository.findAll().stream().map(UserDao::toUserDto).toList();
     }
 
     public void addNewUser(RegisterUser registerUser) {
@@ -55,7 +56,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public Long getPandaOwner(){
+    public Long getPandaOwner() {
         UserDao userDao = userRepository.findUserByEmail(userStorage.getCurrentUserEmail()).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
         return userDao.getId();
     }

@@ -1,22 +1,39 @@
 package live.olszewski.bamboo.user;
 
-public class RegisterUser {
+public class UserDto {
 
+    private Long id;
+    private String UID;
     private String name;
     private String surname;
     private String email;
-    private String password;
 
-    private String role;
-    public RegisterUser() {
+    public UserDto() {
+
     }
 
-    public RegisterUser(String name, String surname, String email, String password, String role) {
+    public UserDto(Long id, String UID, String name, String surname, String email) {
+        this.id = id;
+        this.UID = UID;
         this.name = name;
         this.surname = surname;
         this.email = email;
-        this.password = password;
-        this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUID() {
+        return UID;
+    }
+
+    public void setUID(String UID) {
+        this.UID = UID;
     }
 
     public String getName() {
@@ -41,13 +58,5 @@ public class RegisterUser {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

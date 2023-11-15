@@ -77,14 +77,19 @@ public class UserDao {
         this.email = email;
     }
 
+
     @Override
     public String toString() {
-        return "User{" +
+        return "UserDao{" +
                 "id=" + id +
+                ", UID='" + UID + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", UID='" + UID + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public UserDto toUserDto() {
+        return new UserDto(id, UID, name, surname, email);
     }
 }

@@ -1,10 +1,10 @@
-package live.olszewski.bamboo.pandaDevice.register;
+package live.olszewski.bamboo.pandaDevice;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "panda_device")
-public class RegisterPandaDao {
+public class PandaDao {
 
     @Id
     @SequenceGenerator(
@@ -20,21 +20,23 @@ public class RegisterPandaDao {
     private String name;
     private Boolean status;
     private Long owner;
+    private String api_key;
 
-    public RegisterPandaDao() {
+    public PandaDao() {
 
     }
 
-    public RegisterPandaDao(Long id, String uuid, String location, String name, Boolean status, Long owner) {
+    public PandaDao(Long id, String uuid, String location, String name, Boolean status, Long owner, String api_key) {
         this.id = id;
         this.uuid = uuid;
         this.location = location;
         this.name = name;
         this.status = status;
         this.owner = owner;
+        this.api_key = api_key;
     }
 
-    public RegisterPandaDao(String uuid, String location, String name, Boolean status, Long owner) {
+    public PandaDao(String uuid, String location, String name, Boolean status, Long owner) {
 
         this.uuid = uuid;
         this.location = location;
@@ -44,7 +46,7 @@ public class RegisterPandaDao {
 
     }
 
-    public RegisterPandaDao(String location, String name, Boolean status, Long owner) {
+    public PandaDao(String location, String name, Boolean status, Long owner) {
         this.location = location;
         this.name = name;
         this.status = status;
@@ -99,19 +101,32 @@ public class RegisterPandaDao {
         this.owner = owner;
     }
 
+    public String getApi_key() {
+        return api_key;
+    }
+
+    public void setApi_key(String api_key) {
+        this.api_key = api_key;
+    }
+
     @Override
     public String toString() {
-        return "RegisterPanda{" +
+        return "PandaDao{" +
                 "id=" + id +
                 ", uuid='" + uuid + '\'' +
                 ", location='" + location + '\'' +
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", owner=" + owner +
+                ", api_key='" + api_key + '\'' +
                 '}';
     }
 
     public String valuesForUuidGeneration() {
         return name + location + owner.toString();
+    }
+
+    public PandaDto toDto() {
+        return new PandaDto(id, uuid, location, name, status, owner, api_key);
     }
 }
