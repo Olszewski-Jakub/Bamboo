@@ -14,6 +14,11 @@ public class ApiConfig {
     }
 
     @Bean
+    public String pandaDevicePath(){
+        return ROOT_PATH + "/panda/device";
+    }
+
+    @Bean
     public String registerPandaPath(){
         return ROOT_PATH + "/panda/register";
     }

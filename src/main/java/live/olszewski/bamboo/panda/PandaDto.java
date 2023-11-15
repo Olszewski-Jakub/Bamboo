@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.pandaDevice;
+package live.olszewski.bamboo.panda;
 
 public class PandaDto {
     private Long id;

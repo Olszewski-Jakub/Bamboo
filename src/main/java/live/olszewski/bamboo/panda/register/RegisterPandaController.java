@@ -1,15 +1,11 @@
-package live.olszewski.bamboo.pandaDevice.register;
+package live.olszewski.bamboo.panda.register;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import live.olszewski.bamboo.user.UserService;
-import live.olszewski.bamboo.uuid.UUIDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 import static java.lang.Long.parseLong;
 
@@ -32,10 +28,11 @@ public class RegisterPandaController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Success"
-                    ), @ApiResponse(
-                    responseCode = "403",
-                    description = "Unauthorized"
-            ),
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
                     @ApiResponse(
                             responseCode = "500",
                             description = "Device with this parameters already exists"

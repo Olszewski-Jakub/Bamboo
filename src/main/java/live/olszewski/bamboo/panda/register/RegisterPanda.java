@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.pandaDevice.register;
+package live.olszewski.bamboo.panda.register;
 
 public class RegisterPanda {
 

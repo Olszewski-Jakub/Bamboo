@@ -1,6 +1,7 @@
-package live.olszewski.bamboo.pandaDevice.register;
+package live.olszewski.bamboo.panda.register;
 
-import live.olszewski.bamboo.pandaDevice.PandaDao;
+import live.olszewski.bamboo.panda.PandaDao;
+import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.user.UserService;
 import live.olszewski.bamboo.uuid.UUIDService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,12 @@ import static java.lang.Long.parseLong;
 @Service
 public class RegisterPandaService {
 
-    private final RegisterPandaRepository registerPandaRepository;
+    private final PandaRepository pandaRepository;
     private final UUIDService uuidService;
     private final UserService userService;
     @Autowired
-    public RegisterPandaService(RegisterPandaRepository registerPandaRepository, UUIDService uuidService, UserService userService) {
-        this.registerPandaRepository = registerPandaRepository;
+    public RegisterPandaService(PandaRepository registerPandaRepository, UUIDService uuidService, UserService userService) {
+        this.pandaRepository = registerPandaRepository;
         this.uuidService = uuidService;
         this.userService = userService;
     }
@@ -32,19 +33,19 @@ public class RegisterPandaService {
         registerPandaDao.setUuid(uuidService.generateUUIDFromString(
                 registerPandaDao.valuesForUuidGeneration()
         ).toString());
-        Optional<PandaDao> registerPandaDaoOptional = registerPandaRepository.findDeviceByUUID(registerPandaDao.getUuid());
+        Optional<PandaDao> registerPandaDaoOptional = pandaRepository.findDeviceByUUID(registerPandaDao.getUuid());
         if (registerPandaDaoOptional.isPresent()) {
             throw new IllegalStateException("Device with this parameters already exists");
         }
 
-        registerPandaRepository.save(registerPandaDao);
+        pandaRepository.save(registerPandaDao);
     }
 
     public void deletePandaDevice(Long id) {
-        boolean exists = registerPandaRepository.existsById(id);
+        boolean exists = pandaRepository.existsById(id);
         if (!exists) {
             throw new IllegalStateException("Device with id " + id + " deos not exists");
         }
-        registerPandaRepository.deleteById(id);
+        pandaRepository.deleteById(id);
     }
 }
