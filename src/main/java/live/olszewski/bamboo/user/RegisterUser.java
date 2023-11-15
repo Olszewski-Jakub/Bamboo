@@ -11,12 +11,11 @@ public class RegisterUser {
     public RegisterUser() {
     }
 
-    public RegisterUser(String name, String surname, String email, String password, String role) {
+    public RegisterUser(String name, String surname, String email, String password) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
-        this.role = role;
     }
 
     public String getName() {

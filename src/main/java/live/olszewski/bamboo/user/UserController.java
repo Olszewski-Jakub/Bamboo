@@ -102,4 +102,23 @@ public class UserController {
     public void deleteUser(@PathVariable("userId") Long id) {
         userService.deleteUser(id);
     }
+
+    @GetMapping(path = "/current")
+    @Operation(
+            description = "Get current user details",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    )
+            }
+    )
+    public UserDto currentUserDetails(){
+         return userService.currentUserDetails();
+    }
 }

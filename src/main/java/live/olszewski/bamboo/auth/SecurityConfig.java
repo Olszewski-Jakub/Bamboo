@@ -2,6 +2,7 @@ package live.olszewski.bamboo.auth;
 
 import com.google.firebase.auth.FirebaseAuth;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
+import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,9 @@ public class SecurityConfig {
 
     @Autowired
     private UserStorage userStorage;
+
+    @Autowired
+    private UserService userService;
     @Value("${secured.paths.get}")
     private String[] securedPathsGet;
 
@@ -37,11 +41,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http.csrf(AbstractHttpConfigurer::disable)
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
                 authorizeRequests().requestMatchers(HttpMethod.GET, securedPathsGet).authenticated()
                 .requestMatchers(HttpMethod.POST, securedPathsPost).authenticated()
                 .requestMatchers(HttpMethod.DELETE, securedPathsDelete).authenticated().and()
-                .addFilterBefore(new FirebaseFilter(userStorage,firebaseAuth), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new FirebaseFilter(userStorage, firebaseAuth, userService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

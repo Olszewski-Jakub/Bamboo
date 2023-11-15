@@ -19,7 +19,7 @@ public class TestDbConfig {
     @Bean
     CommandLineRunner commandLineRunner(UserRepository userRepository, PandaRepository pandaRepository, UUIDService uuidService) {
         return args -> {
-            UserDao admin = new UserDao("id-id-id-id", "Jakub", "Olszewski", "j.olszewski05@gmail.com");
+            UserDao admin = new UserDao("id-id-id-id", "Jakub", "Olszewski", "j.olszewski05@gmail.com", true);
             UserDao tester = new UserDao("test-test-test", "tester", "tester", "tester@tester.com");
             userRepository.saveAll(List.of(admin, tester));
 

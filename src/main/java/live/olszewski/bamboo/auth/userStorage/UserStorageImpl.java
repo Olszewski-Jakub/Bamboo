@@ -9,6 +9,8 @@ public class UserStorageImpl implements UserStorage {
     private String currentUserEmail;
     private String currentUserUuid;
 
+    private Boolean isAdministrator;
+
     @Override
     public String getCurrentUserName() {
         return currentUserName;
@@ -25,9 +27,15 @@ public class UserStorageImpl implements UserStorage {
     }
 
     @Override
-    public void setCurrentUser(String name, String email, String uuid) {
+    public Boolean isAdministrator() {
+        return isAdministrator;
+    }
+
+    @Override
+    public void setCurrentUser(String name, String email, String uuid, Boolean isAdministrator) {
         this.currentUserName = name;
         this.currentUserEmail = email;
         this.currentUserUuid = uuid;
+        this.isAdministrator = isAdministrator;
     }
 }

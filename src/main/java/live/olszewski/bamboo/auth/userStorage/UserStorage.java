@@ -5,5 +5,7 @@ public interface UserStorage {
     String getCurrentUserEmail();
     String getCurrentUserUuid();
 
-    void setCurrentUser(String name, String email, String uuid);
+    Boolean isAdministrator();
+
+    void setCurrentUser(String name, String email, String uuid, Boolean isAdministrator);
 }

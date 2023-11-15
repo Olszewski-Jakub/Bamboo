@@ -2,6 +2,7 @@ package live.olszewski.bamboo.user;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "users")
 public class UserDao {
@@ -19,6 +20,7 @@ public class UserDao {
     private String surname;
     private String email;
 
+    private Boolean isAdministrator = false;
     public UserDao() {
     }
 
@@ -28,6 +30,14 @@ public class UserDao {
         this.surname = surname;
         this.UID = UID;
         this.email = email;
+    }
+
+    public UserDao( String UID, String name, String surname, String email, Boolean isAdministrator) {
+        this.UID = UID;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.isAdministrator = isAdministrator;
     }
 
     public UserDao(String UID, String name, String surname, String email) {
@@ -77,6 +87,13 @@ public class UserDao {
         this.email = email;
     }
 
+    public Boolean getAdministrator() {
+        return isAdministrator;
+    }
+
+    public void setAdministrator(Boolean administrator) {
+        isAdministrator = administrator;
+    }
 
     @Override
     public String toString() {
@@ -90,6 +107,6 @@ public class UserDao {
     }
 
     public UserDto toUserDto() {
-        return new UserDto(id, UID, name, surname, email);
+        return new UserDto(id, UID, name, surname, email, isAdministrator);
     }
 }

@@ -8,16 +8,19 @@ public class UserDto {
     private String surname;
     private String email;
 
+    private Boolean isAdministrator;
+
     public UserDto() {
 
     }
 
-    public UserDto(Long id, String UID, String name, String surname, String email) {
+    public UserDto(Long id, String UID, String name, String surname, String email, Boolean isAdministrator) {
         this.id = id;
         this.UID = UID;
         this.name = name;
         this.surname = surname;
         this.email = email;
+        this.isAdministrator = isAdministrator;
     }
 
     public Long getId() {
@@ -58,5 +61,13 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getAdministrator() {
+        return isAdministrator;
+    }
+
+    public void setAdministrator(Boolean administrator) {
+        isAdministrator = administrator;
     }
 }

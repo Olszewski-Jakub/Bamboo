@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public class UserService {
 
 
     public List<UserDto> getUsers() {
+        if (!userStorage.isAdministrator())
+            throw new AccessDeniedException("User is not administrator");
         return userRepository.findAll().stream().map(UserDao::toUserDto).toList();
     }
 
@@ -48,6 +51,10 @@ public class UserService {
         }
     }
 
+    public UserDto  currentUserDetails(){
+         return userRepository.findUserByEmail(userStorage.getCurrentUserEmail()).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists")).toUserDto();
+    }
+
     public void deleteUser(Long id) {
         boolean exists = userRepository.existsById(id);
         if (!exists) {
@@ -59,5 +66,10 @@ public class UserService {
     public Long getPandaOwner() {
         UserDao userDao = userRepository.findUserByEmail(userStorage.getCurrentUserEmail()).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
         return userDao.getId();
+    }
+
+    public Boolean isAdministrator(String email) {
+        UserDao userDao = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
+        return userDao.getAdministrator();
     }
 }
