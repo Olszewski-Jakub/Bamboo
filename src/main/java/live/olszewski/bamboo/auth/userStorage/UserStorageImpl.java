@@ -11,6 +11,8 @@ public class UserStorageImpl implements UserStorage {
 
     private Boolean isAdministrator;
 
+    private Long id;
+
     @Override
     public String getCurrentUserName() {
         return currentUserName;
@@ -32,10 +34,16 @@ public class UserStorageImpl implements UserStorage {
     }
 
     @Override
-    public void setCurrentUser(String name, String email, String uuid, Boolean isAdministrator) {
+    public Long getCurrentUserId() {
+        return id;
+    }
+
+    @Override
+    public void setCurrentUser(String name, String email, String uuid, Boolean isAdministrator, Long id) {
         this.currentUserName = name;
         this.currentUserEmail = email;
         this.currentUserUuid = uuid;
         this.isAdministrator = isAdministrator;
+        this.id = id;
     }
 }

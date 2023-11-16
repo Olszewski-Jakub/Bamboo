@@ -1,5 +1,8 @@
 package live.olszewski.bamboo.services.apiKey;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ApiKeyServiceImpl implements ApiKeyService {
 
     private static final String ALLOWED_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

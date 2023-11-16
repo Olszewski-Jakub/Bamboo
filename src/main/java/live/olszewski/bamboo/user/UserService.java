@@ -72,4 +72,9 @@ public class UserService {
         UserDao userDao = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
         return userDao.getAdministrator();
     }
+
+    public Long getUserId(String email) {
+        UserDao userDao = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
+        return userDao.getId();
+    }
 }

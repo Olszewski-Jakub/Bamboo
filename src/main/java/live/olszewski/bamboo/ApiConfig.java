@@ -22,4 +22,9 @@ public class ApiConfig {
     public String registerPandaPath(){
         return ROOT_PATH + "/panda/register";
     }
+
+    @Bean
+    public String apiKeyPath(){
+        return ROOT_PATH + "/apiKey";
+    }
 }

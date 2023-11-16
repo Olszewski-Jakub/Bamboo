@@ -28,25 +28,31 @@ public class SecurityConfig {
 
     @Autowired
     private UserService userService;
-    @Value("${secured.paths.get}")
-    private String[] securedPathsGet;
 
-    @Value("${secured.paths.post}")
-    private String[] securedPathsPost;
-    @Value("${secured.paths.delete}")
-    private String[] securedPathsDelete;
+    @Value("${secured.paths.jwt.get}")
+    private String[] jwtSecuredPathsGet;
+    @Value("${secured.paths.jwt.post}")
+    private String[] jwtSecuredPathsPost;
+    @Value("${secured.paths.jwt.delete}")
+    private String[] jwtSecuredPathsDelete;
 
     //TODO: session management is depracted and marked for removal in Spring Security 6.0. It needs a quick fix to stop future issues
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
-                authorizeRequests().requestMatchers(HttpMethod.GET, securedPathsGet).authenticated()
-                .requestMatchers(HttpMethod.POST, securedPathsPost).authenticated()
-                .requestMatchers(HttpMethod.DELETE, securedPathsDelete).authenticated().and()
-                .addFilterBefore(new FirebaseFilter(userStorage, firebaseAuth, userService), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, jwtSecuredPathsGet).authenticated()
+                        .requestMatchers(HttpMethod.POST, jwtSecuredPathsPost).authenticated()
+                        .requestMatchers(HttpMethod.DELETE, jwtSecuredPathsDelete).authenticated()
+                        .requestMatchers(HttpMethod.PUT, jwtSecuredPathsPost).authenticated()
+                        .requestMatchers(HttpMethod.PATCH, jwtSecuredPathsPost).authenticated())
+                .addFilterBefore(firebaseFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public FirebaseFilter firebaseFilter() {
+        return new FirebaseFilter(userStorage, firebaseAuth, userService);
     }
 }
 
