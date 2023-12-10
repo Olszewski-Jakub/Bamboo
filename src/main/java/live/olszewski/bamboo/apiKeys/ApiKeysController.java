@@ -16,12 +16,8 @@ import java.util.List;
 @Tag(name = "Api key", description = "Api key related endpoints")
 public class ApiKeysController {
 
-    private final ApiKeysService apiKeysService;
-
     @Autowired
-    public ApiKeysController(ApiKeysService apiKeysService) {
-        this.apiKeysService = apiKeysService;
-    }
+    private ApiKeysService apiKeysService;
 
     @PostMapping(path = "/add")
     @Operation(
