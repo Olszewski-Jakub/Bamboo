@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.panda.config;
+package live.olszewski.bamboo.services.jsonExporter;
 
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 public class JsonExporterServiceImpl implements JsonExporterService {
 
     @Override
-    public String export(PandaConfigDto pandaConfigDto) {
+    public String export(Object object) {
         Gson gson = new Gson();
-        String customerInJson = gson.toJson(pandaConfigDto);
-        return customerInJson;
+        String objectInJson = gson.toJson(object);
+        return objectInJson;
     }
 
 }
