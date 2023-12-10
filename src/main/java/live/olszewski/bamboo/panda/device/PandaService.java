@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PandaService {
@@ -35,6 +36,13 @@ public class PandaService {
         return pandaRepository.findDeviceByOwner(userService.getPandaOwner()).stream().map(PandaDao::toDto).toList();
     }
 
-
+    public Boolean updatePandaApiKey(Long pandaId, String apiKey){
+        Optional<PandaDao> pandaDao = pandaRepository.findById(pandaId);
+        if(pandaDao.isEmpty())
+            return false;
+        pandaDao.get().setApi_key(apiKey);
+        pandaRepository.save(pandaDao.get());
+        return true;
+    }
 
 }

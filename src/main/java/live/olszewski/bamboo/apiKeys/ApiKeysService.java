@@ -1,6 +1,7 @@
 package live.olszewski.bamboo.apiKeys;
 
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
+import live.olszewski.bamboo.panda.device.PandaService;
 import live.olszewski.bamboo.services.apiKey.ApiKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +16,15 @@ public class ApiKeysService {
 
     private final ApiKeyService apiKeyService;
     private final ApiKeysRepository apiKeysRepository;
-
+    private final PandaService pandaService;
     private final UserStorage userStorage;
 
     @Autowired
-    public ApiKeysService(ApiKeyService apiKeyService, ApiKeysRepository apiKeysRepository, UserStorage userStorage) {
+    public ApiKeysService(ApiKeyService apiKeyService, ApiKeysRepository apiKeysRepository, UserStorage userStorage, PandaService pandaService) {
         this.apiKeyService = apiKeyService;
         this.apiKeysRepository = apiKeysRepository;
         this.userStorage = userStorage;
+        this.pandaService = pandaService;
     }
 
     private static boolean areAllFalse(List<Boolean> list) {
@@ -47,6 +49,9 @@ public class ApiKeysService {
         String apiKey = apiKeyService.generateApiKey(apiKeyDao.getSeed());
         apiKeyDao.setKey(apiKey);
         apiKeysRepository.save(apiKeyDao);
+        Boolean updated = pandaService.updatePandaApiKey(pandaIdLong, apiKey);
+        if (!updated)
+            throw new IllegalStateException("Panda with id " + pandaId + " has no api key");
         return apiKey;
     }
 
