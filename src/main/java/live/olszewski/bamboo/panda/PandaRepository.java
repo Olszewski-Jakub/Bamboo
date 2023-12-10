@@ -14,4 +14,7 @@ public interface PandaRepository extends JpaRepository<PandaDao,Long> {
     @Query("SELECT s FROM PandaDao s WHERE s.owner = ?1")
     List<PandaDao> findDeviceByOwner(Long owner);
 
+    @Query("SELECT s FROM PandaDao s WHERE s.id = ?1")
+    Optional<PandaDao> findDeviceById(Long id);
+
 }

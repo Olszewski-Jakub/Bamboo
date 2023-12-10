@@ -1,37 +1,28 @@
-package live.olszewski.bamboo.panda;
+package live.olszewski.bamboo.panda.config;
 
-import live.olszewski.bamboo.panda.config.PandaConfigDto;
-
-public class PandaDto {
-    private Long id;
+public class PandaConfigDto {
     private String uuid;
     private String location;
     private String name;
-    private Boolean status;
-    private Long owner;
+    private String owner;
     private String api_key;
 
-    public PandaDto() {
+    public PandaConfigDto() {
     }
 
-    public PandaDto(Long id, String uuid, String location, String name, Boolean status, Long owner, String api_key) {
-        this.id = id;
+    public PandaConfigDto(String uuid, String location, String name, String owner, String api_key) {
         this.uuid = uuid;
         this.location = location;
         this.name = name;
-        this.status = status;
         this.owner = owner;
         this.api_key = api_key;
     }
-
-    public Long getId() {
-        return id;
+    public PandaConfigDto(String uuid, String location, String name, String api_key) {
+        this.uuid = uuid;
+        this.location = location;
+        this.name = name;
+        this.api_key = api_key;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUuid() {
         return uuid;
     }
@@ -56,19 +47,14 @@ public class PandaDto {
         this.name = name;
     }
 
-    public Boolean getStatus() {
-        return status;
-    }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
 
-    public Long getOwner() {
+
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(Long owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
@@ -78,9 +64,5 @@ public class PandaDto {
 
     public void setApi_key(String api_key) {
         this.api_key = api_key;
-    }
-
-    public PandaConfigDto toConfigDto() {
-        return new PandaConfigDto(this.uuid, this.location, this.name, this.owner.toString(), this.api_key);
     }
 }

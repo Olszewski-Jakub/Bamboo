@@ -27,4 +27,9 @@ public class ApiConfig {
     public String apiKeyPath(){
         return ROOT_PATH + "/apiKey";
     }
+
+    @Bean
+    public String pandaConfigPath(){
+        return ROOT_PATH + "/panda/config";
+    }
 }
