@@ -1,4 +1,4 @@
-name: Only tests
+name: PostgreSQL Setup and Application Tests
 
 on:
   push:
@@ -7,8 +7,37 @@ on:
     branches: [ "main" ]
 
 jobs:
-  run-all-tests:
+  setup-postgres:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install PostgreSQL dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install postgresql postgresql-contrib
+      - name: Create PostgreSQL runner
+        uses: actions/setup-postgresql@v3
+        with:
+          version: 14
+          username: postgres
+          password: postgres
+      - name: Create PostgreSQL database
+        run: |
+          psql --host=localhost --username=postgres --password=admin \
+            -c "CREATE DATABASE myapp;"
+      - name: Define application schema
+        run: |
+          psql --host=localhost --username=postgres --password=admin --dbname=bamboo \
+            -f schema.sql
+      - name: Seed database with initial data
+        run: |
+          psql --host=localhost --username=postgres --password=admin --dbname=bamboo \
+            -f data.sql
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: [setup-postgres]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -22,6 +51,8 @@ jobs:
           cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-
-      - name: Only run tests for ApiKeyService
-        run: ./gradlew test -PtestGroups=ApiKeyService
+      - name: Set database connection parameters
+        run: |
+          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/bamboo" >> .env
+      - name: Run application tests
+        run: ./gradlew test
