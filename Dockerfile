@@ -1,11 +1,14 @@
 # Use an official OpenJDK runtime as a parent image
-FROM openjdk:11-jre-slim
+FROM openjdk:17
 
 # Set the working directory to /app
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY . /app
+
+# Grant execute permission to the gradlew script
+RUN chmod +x ./gradlew
 
 # Run Gradle build to compile and package the application
 RUN ./gradlew clean build
