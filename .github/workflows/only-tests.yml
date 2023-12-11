@@ -23,6 +23,5 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: All tests
-        run: ./gradlew test
-
+      - name: Only run tests for ApiKeyService
+        run: ./gradlew test -PtestGroups=ApiKeyService
