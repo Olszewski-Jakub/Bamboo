@@ -28,6 +28,8 @@ jobs:
           path: |
             ~/.gradle/caches
           key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      - name: Set execute permissions for Gradle Wrapper
+        run: chmod +x ./gradlew
       - name: Build and Test with Gradle
         run: |
           ./gradlew clean test
