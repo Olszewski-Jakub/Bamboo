@@ -30,6 +30,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Clear Gradle Cache
+        run: ./gradlew clean --no-daemon
       - name: Build with Gradle
         run: ./gradlew build
 
