@@ -1,27 +1,23 @@
-# Use an official OpenJDK runtime as a parent image
-# Use an official OpenJDK 17 runtime as a parent image
-FROM openjdk:17
-RUN microdnf install findutils
-# Set the working directory to /app
+FROM adoptopenjdk/openjdk17:alpine-jre
+
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+COPY . .
 
-# Grant execute permission to the gradlew script
-RUN chmod +x ./gradlew
-
-# Grant execute permission to the gradlew script
-RUN chmod +x ./gradlew
-
-# Run Gradle build to compile and package the application
 RUN ./gradlew build
 
-# Expose the port the app runs on
+RUN jar -xf build/libs/bamboo-0.0.1-SNAPSHOT.jar
+
+RUN tar -cf artifact.tar META-INF/ BOOT-INF/ classes/
+
+FROM alpine:latest
+
+WORKDIR /artifact
+
+COPY --from=0 /app/artifact.tar .
+
+RUN tar -xf artifact.tar
+
 EXPOSE 8080
 
-# Define environment variable
-ENV APP_NAME=bamboo
-
-# Run the JAR file
-CMD ["java", "-jar", "build/libs/${APP_NAME}.jar"]
+CMD ["java", "-cp", "classes:META-INF/MANIFEST.MF", "com.example.MyApp"]
