@@ -20,8 +20,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: jdbc:postgresql://localhost:5432/bamboo
     steps:
       - uses: actions/checkout@v4
       - name: Set execute permissions on gradlew
@@ -31,10 +29,14 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
       - name: Clear Gradle Cache
         run: ./gradlew clean --no-daemon
       - name: Build with Gradle
-        run: ./gradlew build
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
+        with:
+          arguments: build
 
       - name: Test Report
         uses: actions/upload-artifact@v3
