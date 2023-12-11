@@ -12,14 +12,12 @@ import java.util.Optional;
 @Service
 public class PandaOwnershipCkeckImpl implements PandaOwnershipCkeck {
 
-    private final PandaRepository pandaRepository;
+
     @Autowired
     UserStorage userStorage;
 
     @Autowired
-    public PandaOwnershipCkeckImpl(PandaRepository pandaRepository) {
-        this.pandaRepository = pandaRepository;
-    }
+    private PandaRepository pandaRepository;
 
     @Override
     public boolean isPandaOwner(Long pandaId) {

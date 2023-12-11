@@ -2,7 +2,9 @@ package live.olszewski.bamboo.user;
 
 import jakarta.persistence.*;
 
-
+/**
+ * Represents a User entity in the database.
+ */
 @Entity
 @Table(name = "users")
 public class UserDao {
@@ -21,9 +23,16 @@ public class UserDao {
     private String email;
 
     private Boolean isAdministrator = false;
+
+    /**
+     * Default constructor.
+     */
     public UserDao() {
     }
 
+    /**
+     * Constructor with all fields.
+     */
     public UserDao(Long id, String UID, String name, String surname, String email) {
         this.id = id;
         this.name = name;
@@ -32,7 +41,10 @@ public class UserDao {
         this.email = email;
     }
 
-    public UserDao( String UID, String name, String surname, String email, Boolean isAdministrator) {
+    /**
+     * Constructor with all fields except id.
+     */
+    public UserDao(String UID, String name, String surname, String email, Boolean isAdministrator) {
         this.UID = UID;
         this.name = name;
         this.surname = surname;
@@ -40,6 +52,9 @@ public class UserDao {
         this.isAdministrator = isAdministrator;
     }
 
+    /**
+     * Constructor without id and isAdministrator fields.
+     */
     public UserDao(String UID, String name, String surname, String email) {
         this.UID = UID;
         this.name = name;
@@ -106,6 +121,11 @@ public class UserDao {
                 '}';
     }
 
+    /**
+     * Converts this UserDao to a UserDto.
+     *
+     * @return a UserDto with the same data as this UserDao.
+     */
     public UserDto toUserDto() {
         return new UserDto(id, UID, name, surname, email, isAdministrator);
     }

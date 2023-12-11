@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,6 +29,8 @@ public class FirebaseFilter extends OncePerRequestFilter {
         this.userService = userService;
     }
 
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
@@ -40,7 +43,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(uid, null, null);
                     SecurityContextHolder.getContext().setAuthentication(auth);
                     String email = decodedToken.getEmail();
-                    userStorage.setCurrentUser(decodedToken.getName(),email, uid,userService.isAdministrator(email), userService.getUserId(email));
+                    userStorage.setCurrentUser(decodedToken.getName(), email, uid, userService.isAdministrator(email), userService.getUserId(email));
                 }
             } catch (FirebaseAuthException e) {
                 SecurityContextHolder.clearContext();

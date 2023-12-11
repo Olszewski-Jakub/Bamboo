@@ -17,12 +17,8 @@ import java.util.List;
 @Tag(name = "Panda", description = "Panda related endpoints")
 public class PandaController {
 
-    private final PandaService pandaService;
-
     @Autowired
-    public PandaController(PandaService pandaService) {
-        this.pandaService = pandaService;
-    }
+    private PandaService pandaService;
 
     @GetMapping(path = "/all")
     @Operation(

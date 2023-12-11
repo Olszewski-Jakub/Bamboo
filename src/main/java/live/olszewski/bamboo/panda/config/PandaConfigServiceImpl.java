@@ -15,19 +15,17 @@ import java.util.Optional;
 @Service
 public class PandaConfigServiceImpl implements PandaConfigService {
 
-    private final PandaRepository pandaRepository;
-    private final JsonExporterService jsonExporterService;
-    private final UserService userService;
+    @Autowired
+    private PandaOwnershipCkeck pandaOwnershipCkeck;
 
     @Autowired
-    public PandaConfigServiceImpl(PandaRepository pandaRepository, JsonExporterService jsonExporterService, UserService userService) {
-        this.pandaRepository = pandaRepository;
-        this.jsonExporterService = jsonExporterService;
-        this.userService = userService;
-    }
+    private PandaRepository pandaRepository;
 
     @Autowired
-    PandaOwnershipCkeck pandaOwnershipCkeck;
+    private JsonExporterService jsonExporterService;
+
+    @Autowired
+    private UserService userService;
 
     private String getOwner(Long id) {
         return userService.getUserById(id);

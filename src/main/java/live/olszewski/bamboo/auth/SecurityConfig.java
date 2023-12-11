@@ -1,6 +1,7 @@
 package live.olszewski.bamboo.auth;
 
 import com.google.firebase.auth.FirebaseAuth;
+import live.olszewski.bamboo.apiKeys.ApiKeysService;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.savedrequest.NullRequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +28,9 @@ public class SecurityConfig {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    ApiKeysService apiKeysService;
+
     @Value("${secured.paths.jwt.get}")
     private String[] jwtSecuredPathsGet;
     @Value("${secured.paths.jwt.post}")
@@ -36,7 +38,13 @@ public class SecurityConfig {
     @Value("${secured.paths.jwt.delete}")
     private String[] jwtSecuredPathsDelete;
 
-    //TODO: session management is depracted and marked for removal in Spring Security 6.0. It needs a quick fix to stop future issues
+    @Value("${secured.paths.api_key.get}")
+    private String[] apiKeySecuredPathsGet;
+    @Value("${secured.paths.api_key.post}")
+    private String[] apiKeySecuredPathsPost;
+    @Value("${secured.paths.api_key.delete}")
+    private String[] apiKeySecuredPathsDelete;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
@@ -47,12 +55,26 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, jwtSecuredPathsPost).authenticated()
                         .requestMatchers(HttpMethod.PATCH, jwtSecuredPathsPost).authenticated())
                 .addFilterBefore(firebaseFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, apiKeySecuredPathsGet).authenticated()
+                        .requestMatchers(HttpMethod.POST, apiKeySecuredPathsPost).authenticated()
+                        .requestMatchers(HttpMethod.DELETE, apiKeySecuredPathsDelete).authenticated()
+                        .requestMatchers(HttpMethod.PUT, apiKeySecuredPathsPost).authenticated()
+                        .requestMatchers(HttpMethod.PATCH, apiKeySecuredPathsPost).authenticated()
+                )
+                .addFilterBefore(apiKeyFilter(), UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 
     @Bean
     public FirebaseFilter firebaseFilter() {
         return new FirebaseFilter(userStorage, firebaseAuth, userService);
+    }
+
+    @Bean
+    public ApiKeyFilter apiKeyFilter() {
+        return new ApiKeyFilter(apiKeysService);
     }
 }
 
