@@ -11,6 +11,8 @@ services:
       - "5432:5432"
   app:
     container_name: bamboo
+    environment:
+      POSTGRES_HOST: postgres
     build:
       context: .
       dockerfile: Dockerfile
