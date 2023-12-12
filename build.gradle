@@ -31,6 +31,13 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.8'
 
 }
+sourceSets {
+	main {
+		resources {
+			srcDirs = ["src/main/resources"]
+		}
+	}
+}
 
 tasks.named('test') {
 	useJUnitPlatform()
