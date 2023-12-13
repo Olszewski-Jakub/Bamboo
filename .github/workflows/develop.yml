@@ -7,47 +7,41 @@ on:
     branches: [ develop ]
 
 jobs:
-  generate-swagger:
+  test:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '20'
 
       - name: Set up Firebase config
         run: echo "${{ secrets.FIREBASE_CONFIG }}" | base64 -d > firebase_config.json
         env:
           FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
 
-      - name: Install Docker
-        run: |
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sh get-docker.sh
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: Install Docker Compose
-        run: |
-          curl -L "https://github.com/docker/compose/releases/download/2.23.3/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
-          sudo mv docker-compose.yml /usr/local/bin/docker-compose.yml
-          sudo chmod +x /usr/local/bin/docker-compose.yml
+      - name: Set execution permissions for gradlew
+        run: chmod +x gradlew
 
-      - name: Run application with Docker Compose
-        run: |
-          docker-compose up -d
-          sleep 60  # Wait for the application to start
+      - name: Run Gradle Tests
+        run: ./gradlew test
 
-      - name: Install Swagger CLI
-        run: npm install -g swagger-cli
-
-      - name: Download Swagger JSON
-        run: swagger-cli bundle -r http://localhost:8080/swagger-ui.html -o ./swagger.json
-
-      - name: Commit and push Swagger JSON
-        run: |
-          GIT_USER_EMAIL_BASE64=$(echo -n "${{ secrets.GIT_USER_EMAIL }}" | base64)
-          GIT_USER_NAME_BASE64=$(echo -n "${{ secrets.GIT_USER_NAME }}" | base64)
-          git config --local user.email "$GIT_USER_EMAIL_BASE64"
-          git config --local user.name "$GIT_USER_NAME_BASE64"
-          git add swagger.json
-          git commit -m "Update Swagger JSON" && git push
-        env:
-          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
-          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
