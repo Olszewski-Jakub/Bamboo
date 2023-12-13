@@ -24,4 +24,4 @@ LABEL maintainer="Olszewski-Jakub"
 EXPOSE 8080
 
 # Run the jar file
-ENTRYPOINT ["java", "-jar", "/app/build/libs/bamboo-*", ".jar"]
+ENTRYPOINT ["java", "-jar", "/app/build/libs/bamboo.jar"]

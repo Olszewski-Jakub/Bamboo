@@ -5,11 +5,14 @@ plugins {
 }
 
 group = 'live.olszewski'
-def appVersion = '0.0.1'
-version = appVersion
+version = '0.0.1'
 
 java {
 	sourceCompatibility = '17'
+}
+
+bootJar {
+	archiveFileName = 'bamboo.jar'
 }
 
 repositories {

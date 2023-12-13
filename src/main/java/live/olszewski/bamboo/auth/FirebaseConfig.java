@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfig {
@@ -21,8 +22,7 @@ public class FirebaseConfig {
     public FirebaseAuth firebaseAuth() throws IOException {
         FirebaseApp firebaseApp;
         if (FirebaseApp.getApps().isEmpty()) {
-            FileInputStream serviceAccount =
-                    new FileInputStream(firebaseConfigPath);
+            InputStream serviceAccount = this.getClass().getResourceAsStream("/firebase_config.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
