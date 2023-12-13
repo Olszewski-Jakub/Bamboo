@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'live.olszewski'
-version = '0.0.1-SNAPSHOT'
+def appVersion = '0.0.1'
+version = appVersion
 
 java {
 	sourceCompatibility = '17'

@@ -1,10 +1,10 @@
-name: Run integration tests on develop branch
+name: Run integration tests and build an artifact on production branch
 
 on:
   push:
-    branches: [ main ]
+    branches: [develop]
   pull_request:
-    branches: [ main ]
+    branches: [develop]
 
 jobs:
   build:
@@ -44,3 +44,12 @@ jobs:
 
       - name: Run Gradle Tests
         run: ./gradlew test
+
+      - name: Build JAR artifact
+        run: ./gradlew assemble
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: build/libs/  # Adjust the path to match your actual artifact location
