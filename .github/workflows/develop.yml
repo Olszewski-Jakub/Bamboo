@@ -1,5 +1,4 @@
 name: Develop
-description: Run integration tests and build an artifact on develop branch
 
 on:
   push:
