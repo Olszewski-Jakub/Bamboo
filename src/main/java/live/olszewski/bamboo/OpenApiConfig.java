@@ -9,6 +9,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 
+
+
+
+
 @OpenAPIDefinition(
         info = @Info(
                 title = "Bamboo API",
@@ -27,15 +31,24 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 )
         },
         security = {
-                @SecurityRequirement(name = "bearerAuth")
+                @SecurityRequirement(name = "bearerAuth"),
+                @SecurityRequirement(name = "apiKey")
         }
 )
 @SecurityScheme(
-        name="bearerAuth",
+        name = "bearerAuth",
         description = "JWT Token",
         scheme = "bearer",
         type = SecuritySchemeType.HTTP,
         bearerFormat = "JWT",
+        in = SecuritySchemeIn.HEADER
+)
+@SecurityScheme(
+        name = "apiKey",
+        description = "API Key",
+        scheme = "bearer",
+        type = SecuritySchemeType.HTTP,
+        paramName = "Authorization",
         in = SecuritySchemeIn.HEADER
 )
 public class OpenApiConfig {

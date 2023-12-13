@@ -9,19 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+/**
+ * Controller for handling user-related requests.
+ */
 @RestController
 @RequestMapping(path = "#{apiConfig.userPath}")
 @Tag(name = "User", description = "User related endpoints")
 public class UserController {
 
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
+    /**
+     * Endpoint for getting all users.
+     * @return a list of all users.
+     */
     @GetMapping
     @Operation(
             description = "Get all users",
@@ -40,6 +42,10 @@ public class UserController {
         return userService.getUsers();
     }
 
+    /**
+     * Endpoint for registering a new user.
+     * @param user the user to register.
+     */
     @PostMapping
     @Operation(
             description = "Register new user",
@@ -74,6 +80,10 @@ public class UserController {
         userService.addNewUser(user);
     }
 
+    /**
+     * Endpoint for deleting a user.
+     * @param id the id of the user to delete.
+     */
     @DeleteMapping(path = "{userId}")
     @Operation(
             description = "Delete user",
@@ -103,6 +113,10 @@ public class UserController {
         userService.deleteUser(id);
     }
 
+    /**
+     * Endpoint for getting the details of the current user.
+     * @return the details of the current user.
+     */
     @GetMapping(path = "/current")
     @Operation(
             description = "Get current user details",
@@ -118,7 +132,7 @@ public class UserController {
                     )
             }
     )
-    public UserDto currentUserDetails(){
-         return userService.currentUserDetails();
+    public UserDto currentUserDetails() {
+        return userService.currentUserDetails();
     }
 }

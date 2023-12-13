@@ -14,21 +14,22 @@ import static java.lang.Long.parseLong;
 
 @Service
 public class ApiKeysServiceImpl implements ApiKeysService {
-    private final ApiKeyService apiKeyService;
-    private final ApiKeysRepository apiKeysRepository;
-    private final PandaService pandaService;
-    private final UserStorage userStorage;
-
-    @Autowired
-    public ApiKeysServiceImpl(ApiKeyService apiKeyService, ApiKeysRepository apiKeysRepository, UserStorage userStorage, PandaService pandaService) {
-        this.apiKeyService = apiKeyService;
-        this.apiKeysRepository = apiKeysRepository;
-        this.userStorage = userStorage;
-        this.pandaService = pandaService;
-    }
 
     @Autowired
     private PandaOwnershipCkeck pandaOwnershipCkeck;
+
+    @Autowired
+    private PandaService pandaService;
+
+    @Autowired
+    private ApiKeyService apiKeyService;
+
+    @Autowired
+    private ApiKeysRepository apiKeysRepository;
+
+    @Autowired
+    private UserStorage userStorage;
+
     private static boolean areAllFalse(List<Boolean> list) {
         for (boolean value : list) {
             if (value) {
@@ -109,6 +110,19 @@ public class ApiKeysServiceImpl implements ApiKeysService {
             throw new IllegalStateException("Panda with id " + pandaId + " has no active api key");
         }
         return apiKeyDaoOptional.get().toDto();
+    }
+
+    @Override
+    public ApiKeyDto verifyApiKey(String apiKey) {
+
+        Optional<ApiKeyDao> apiKeyDao = apiKeysRepository.findByKey(apiKey);
+        if (apiKeyDao.isEmpty()){
+            throw new IllegalStateException("Api key " + apiKey + " does not exists");
+        }
+        ApiKeyDto apiKeyDto = apiKeyDao.get().toDto();
+
+
+        return apiKeyDto;
     }
 
 }

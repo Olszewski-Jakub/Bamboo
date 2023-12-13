@@ -12,15 +12,18 @@ import java.util.Optional;
 import static java.lang.Long.parseLong;
 
 
-interface ApiKeysService {
+public interface ApiKeysService {
 
-    public String addNewApiKey(String pandaId);
+    String addNewApiKey(String pandaId);
 
-    public void deactivateApiKey(Long id);
+    void deactivateApiKey(Long id);
 
-    public void activateApiKey(Long id);
+    void activateApiKey(Long id);
 
-    public ApiKeyDto getApiKeyByPanda(String pandaId);
+    ApiKeyDto getApiKeyByPanda(String pandaId);
 
-    public List<ApiKeyDto> getApiKeyByOwner();
+    List<ApiKeyDto> getApiKeyByOwner();
+
+    ApiKeyDto verifyApiKey(String apiKey);
+
 }

@@ -21,4 +21,7 @@ public interface ApiKeysRepository extends JpaRepository<ApiKeyDao,Long> {
 
     @Query("SELECT u FROM ApiKeyDao u WHERE u.panda = ?1 AND u.active = true")
     Optional<ApiKeyDao> findByPandaAndActive(Long panda);
+
+    @Query("SELECT u FROM ApiKeyDao u WHERE u.key = ?1")
+    Optional<ApiKeyDao> findByKey(String key);
 }

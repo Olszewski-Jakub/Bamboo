@@ -14,12 +14,8 @@ import static java.lang.Long.parseLong;
 @Tag(name = "Register Panda", description = "Endpoints related to register new panda device")
 public class RegisterPandaController {
 
-    private final RegisterPandaService registerPandaService;
-
     @Autowired
-    public RegisterPandaController(RegisterPandaService registerPandaService) {
-        this.registerPandaService = registerPandaService;
-    }
+    private RegisterPandaService registerPandaService;
 
     @PostMapping
     @Operation(

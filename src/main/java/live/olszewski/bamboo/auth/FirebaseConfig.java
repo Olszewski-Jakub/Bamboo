@@ -10,23 +10,29 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.config.path}")
+    @Value("${firebase.config.path:firebase_config.json}")
     private String firebaseConfigPath;
 
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {
-        FileInputStream serviceAccount =
-                new FileInputStream(firebaseConfigPath);
+        FirebaseApp firebaseApp;
+        if (FirebaseApp.getApps().isEmpty()) {
+            InputStream serviceAccount = this.getClass().getResourceAsStream("/firebase_config.json");
 
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
 
-        FirebaseApp.initializeApp(options);
-        return FirebaseAuth.getInstance();
+            firebaseApp = FirebaseApp.initializeApp(options);
+        } else {
+            firebaseApp = FirebaseApp.getInstance();
+        }
+
+        return FirebaseAuth.getInstance(firebaseApp);
     }
 }
