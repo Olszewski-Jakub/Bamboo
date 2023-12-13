@@ -44,3 +44,52 @@ jobs:
 
       - name: Run Gradle Tests
         run: ./gradlew test
+  generate-swagger:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '20'
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set execution permissions for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Gradle BootRun in background
+        run: |
+          ./gradlew bootRun &
+          sleep 60  # Wait for the application to start
+
+      - name: Install Swagger CLI
+        run: npm install -g swagger-cli
+
+      - name: Download Swagger JSON
+        run: swagger-cli bundle -r http://localhost:8080/swagger-ui.html -o ./swagger.json
+
+      - name: Commit and push Swagger JSON
+        run: |
+          GIT_USER_EMAIL_BASE64=$(echo -n "${{ secrets.GIT_USER_EMAIL }}" | base64)
+          GIT_USER_NAME_BASE64=$(echo -n "${{ secrets.GIT_USER_NAME }}" | base64)
+          git config --local user.email "$GIT_USER_EMAIL_BASE64"
+          git config --local user.name "$GIT_USER_NAME_BASE64"
+          git add swagger.json
+          git commit -m "Update Swagger JSON" && git push
+        env:
+          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
