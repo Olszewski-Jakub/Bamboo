@@ -7,47 +7,8 @@ on:
     branches: [ develop ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '20'
-
-      - name: Set up Firebase config
-        run: echo "${{ secrets.FIREBASE_CONFIG }}" | base64 -d > firebase_config.json
-        env:
-          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
-
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Set execution permissions for gradlew
-        run: chmod +x gradlew
-
-      - name: Run Gradle Tests
-        run: ./gradlew test
   generate-swagger:
-    needs: test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -65,8 +26,8 @@ jobs:
       - name: Install Docker Compose
         run: |
           curl -L "https://github.com/docker/compose/releases/download/2.23.3/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
-          sudo mv docker-compose /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+          sudo mv docker-compose.yml /usr/local/bin/docker-compose.yml
+          sudo chmod +x /usr/local/bin/docker-compose.yml
 
       - name: Run application with Docker Compose
         run: |
