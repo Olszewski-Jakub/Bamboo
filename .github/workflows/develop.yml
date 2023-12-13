@@ -1,11 +1,16 @@
-name: Run Gradle Tests
+name: Run integration tests on develop branch
 
-on: [push, pull_request]
-
+on:
+    push:
+        branches: [ develop ]
+    pull_request:
+        branches: [ develop ]
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

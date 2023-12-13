@@ -34,25 +34,19 @@ public class ApiKeyServiceTest {
     ApiKeyService apiKeyService;
 
     @Container
-    private static final PostgreSQLContainer<?> postgres  = new PostgreSQLContainer<>("postgres:16")
-                .withDatabaseName("integration-tests-db")
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
+            .withDatabaseName("integration-tests-db")
             .withUsername("postgres")
             .withPassword("admin")
             .withInitScript("init.sql");
+
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
     }
-    @MockBean
-    private FirebaseApp firebaseApp;
-    @BeforeEach
-    public void setUpEach() {
-        if (FirebaseApp.getApps().isEmpty()) {
-            when(firebaseApp.getName()).thenReturn("Mock FirebaseApp");
-        }
-    }
+
     @BeforeAll
     public static void setUp() {
         postgres.start();

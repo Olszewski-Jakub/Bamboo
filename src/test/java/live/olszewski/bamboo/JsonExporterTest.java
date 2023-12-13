@@ -45,14 +45,7 @@ public class JsonExporterTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
     }
-    @MockBean
-    private FirebaseApp firebaseApp;
-    @BeforeEach
-    public void setUpEach() {
-        if (FirebaseApp.getApps().isEmpty()) {
-            when(firebaseApp.getName()).thenReturn("Mock FirebaseApp");
-        }
-    }
+
     @BeforeAll
     public static void setUp() {
         postgres.start();
