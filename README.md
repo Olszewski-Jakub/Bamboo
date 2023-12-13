@@ -2,7 +2,7 @@
 
 <p align="center" ><img src="https://i.imgur.com/bzUB1sS.jpeg" alt="project-image"></p>
 
-<p id="description">Bamboo is an API for allow transferring information between Panda and Crowdeo.</p>
+<p id="description" align="centre" style="text-align: center">Bamboo is responsible for connecting the Crowdeo Dashboard with the 'Panda' device. The API facilitates seamless data transmission between the crowd tracking system and the dashboard, enabling real-time visualization and analysis of crowd movement data.</p>
 
 <p align="center">
 <img src="https://github.com/Olszewski-Jakub/Bamboo/actions/workflows/develop.yml/badge.svg?branch=develop" alt="shields">
