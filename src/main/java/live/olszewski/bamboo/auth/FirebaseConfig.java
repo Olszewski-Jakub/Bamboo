@@ -14,19 +14,25 @@ import java.io.IOException;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.config.path}")
+    @Value("${firebase.config.path:firebase_config.json}")
     private String firebaseConfigPath;
 
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {
-        FileInputStream serviceAccount =
-                new FileInputStream(firebaseConfigPath);
+        FirebaseApp firebaseApp;
+        if (FirebaseApp.getApps().isEmpty()) {
+            FileInputStream serviceAccount =
+                    new FileInputStream(firebaseConfigPath);
 
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
 
-        FirebaseApp.initializeApp(options);
-        return FirebaseAuth.getInstance();
+            firebaseApp = FirebaseApp.initializeApp(options);
+        } else {
+            firebaseApp = FirebaseApp.getInstance();
+        }
+
+        return FirebaseAuth.getInstance(firebaseApp);
     }
 }

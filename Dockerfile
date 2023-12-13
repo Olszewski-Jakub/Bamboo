@@ -14,19 +14,11 @@ RUN chmod +x ./gradlew
 COPY . .
 
 # Build the project inside the docker image
-RUN ./gradlew clean build
+RUN ./gradlew build -x test
+
 
 # Add Maintainer Info
 LABEL maintainer="Olszewski-Jakub"
-
-## Start a new stage for running the application
-#FROM openjdk:20-jdk-slim as run
-
-# Set the working directory in the image
-#WORKDIR /app
-#
-# Copy the jar file built in the first stage
-#COPY --from=build /app/build/libs/bamboo-0.0.1-SNAPSHOT.jar app.jar
 
 # The application's port
 EXPOSE 8080
