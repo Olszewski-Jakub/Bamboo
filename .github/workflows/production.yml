@@ -2,7 +2,7 @@ name: Production
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -45,14 +45,6 @@ jobs:
       - name: Run Gradle Tests
         run: ./gradlew test
 
-      - name: Build JAR artifact
-        run: ./gradlew assemble
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: bamboo
-          path: build/libs/  # Adjust the path to match your actual artifact location
   build:
     needs: test
     runs-on: ubuntu-latest
