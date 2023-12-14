@@ -92,9 +92,9 @@ git clone https://github.com/your-username/repository.git
 **1. Code Standards:**
 
 - Adhere to Java and Spring coding standards.
-   - Use camelCase for variable and method names.
-   - Follow REST API best practices.
-   - Keep code modular and well-organized.
+- Use camelCase for variable and method names.
+- Follow REST API best practices.
+- Keep code modular and well-organized.
 
 **2. Documentation:**
 
@@ -108,7 +108,6 @@ git clone https://github.com/your-username/repository.git
 
 <h3>Submission:</h3>
 1. Committing:
-
    - Make meaningful and well-commented commits.
    - Follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification if possible.
 
@@ -117,8 +116,8 @@ git clone https://github.com/your-username/repository.git
    - Include a clear and informative title and description.
 
 3. Collaboration:
-- Be responsive to feedback and address comments promptly.
-- Make any necessary adjustments as requested.
+   - Be responsive to feedback and address comments promptly.
+   - Make any necessary adjustments as requested.
 
 <h2>💖Like my work?</h2>
 

@@ -1,29 +1,21 @@
 package live.olszewski.bamboo;
 
-import com.google.firebase.FirebaseApp;
-import live.olszewski.bamboo.auth.FirebaseConfig;
 import live.olszewski.bamboo.services.apiKey.ApiKeyService;
 import live.olszewski.bamboo.services.apiKey.ApiKeyServiceImpl;
-import net.bytebuddy.utility.dispatcher.JavaDispatcher;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,7 +26,7 @@ public class ApiKeyServiceTest {
     ApiKeyService apiKeyService;
 
     @Container
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("integration-tests-db")
             .withUsername("postgres")
             .withPassword("admin")
