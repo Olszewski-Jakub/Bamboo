@@ -29,9 +29,20 @@ public class UserDao {
      */
     public UserDao() {
     }
-
     /**
      * Constructor with all fields.
+     */
+    public UserDao(Long id,String UID, String name, String surname, String email, Boolean isAdministrator) {
+        this.id = id;
+        this.UID = UID;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.isAdministrator = isAdministrator;
+    }
+
+    /**
+     * Constructor with all fields except isAdministrator.
      */
     public UserDao(Long id, String UID, String name, String surname, String email) {
         this.id = id;

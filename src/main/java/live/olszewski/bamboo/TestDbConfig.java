@@ -21,7 +21,7 @@ public class TestDbConfig {
         return args -> {
             UserDao admin = new UserDao("id-id-id-id", "Jakub", "Olszewski", "j.olszewski05@gmail.com", true);
             UserDao tester = new UserDao("test-test-test", "tester", "tester", "tester@tester.com");
-            userRepository.saveAll(List.of(admin, tester));
+//            userRepository.saveAll(List.of(admin, tester));
 
             PandaDao panda1 = new PandaDao("Galway", "Dunlin Village", true, parseLong("1"));
             panda1.setUuid(uuidService.generateUUIDFromString(panda1.valuesForUuidGeneration()).toString());
@@ -31,7 +31,7 @@ public class TestDbConfig {
 
             PandaDao panda3 = new PandaDao("Galway", "Corrib Village", true, parseLong("2"));
             panda3.setUuid(uuidService.generateUUIDFromString(panda3.valuesForUuidGeneration()).toString());
-            pandaRepository.saveAll(List.of(panda1, panda2, panda3));
+//            pandaRepository.saveAll(List.of(panda1, panda2, panda3));
         };
     }
 

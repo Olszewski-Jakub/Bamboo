@@ -11,6 +11,7 @@ create table users
     primary key (id)
 );
 
+
 drop table if exists panda_device;
 create table panda_device
 (

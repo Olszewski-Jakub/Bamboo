@@ -1,9 +1,10 @@
-package live.olszewski.bamboo;
+package live.olszewski.bamboo.user;
 
-import live.olszewski.bamboo.services.apiKey.ApiKeyService;
-import live.olszewski.bamboo.services.apiKey.ApiKeyServiceImpl;
+import live.olszewski.bamboo.auth.userStorage.UserStorage;
+import live.olszewski.bamboo.testUtils.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,17 +15,27 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-public class ApiKeyServiceTest {
+public class CurrentUserDetailsTest {
 
     @Autowired
-    ApiKeyService apiKeyService;
+    private UserService userService;
 
+    @Autowired
+    private UserStorage userStorage;
+
+    @Autowired
+    private TestUtils testUtils;
+
+    @Autowired
+    private UserRepository userRepository;
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("integration-tests-db")
@@ -49,28 +60,27 @@ public class ApiKeyServiceTest {
         postgres.stop();
     }
 
-    @Test
-    public void generatesApiKeyOfCorrectLength() {
-        String seed = "testSeed";
-        String apiKey = apiKeyService.generateApiKey(seed);
-        assertEquals(ApiKeyServiceImpl.DEFAULT_API_KEY_LENGTH, apiKey.length());
+    @BeforeEach
+    public void clearDatabase() {
+        testUtils.clearUserDatabase();
     }
 
     @Test
-    public void generatesDifferentApiKeysForDifferentSeeds() {
-        String seed1 = "testSeed1";
-        String seed2 = "testSeed2";
-        String apiKey1 = apiKeyService.generateApiKey(seed1);
-        String apiKey2 = apiKeyService.generateApiKey(seed2);
-        assertNotEquals(apiKey1, apiKey2);
+    public void currentUserDetails_ReturnsCorrectUserWhenExists() {
+        UserDao userDao = testUtils.generateUserDaoWithId(1L);
+        System.out.println(userDao.getEmail());
+        userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
+        testUtils.addUsersToDatabase(1);
+        UserDto actualUser = userService.currentUserDetails();
+        System.out.println(actualUser.getId());
+        System.out.println(userDao.toUserDto().getId());
+        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), actualUser));
     }
 
     @Test
-    public void generatesSameApiKeyForSameSeed() {
-        String seed = "testSeed";
-        String apiKey1 = apiKeyService.generateApiKey(seed);
-        String apiKey2 = apiKeyService.generateApiKey(seed);
-        assertEquals(apiKey1, apiKey2);
-    }
+    public void currentUserDetails_ThrowsExceptionWhenUserDoesNotExist() {
 
+
+        assertThrows(IllegalStateException.class, () -> userService.currentUserDetails());
+    }
 }

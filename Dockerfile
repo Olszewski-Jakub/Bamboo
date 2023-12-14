@@ -1,12 +1,16 @@
 FROM openjdk:20-jdk-slim
 
-# Set the working directory in the image
 WORKDIR /app
 
-# Copy gradle executable to the image
+# Copy gradle files
 COPY gradlew .
+
+# Copy gradle files
 COPY gradle gradle
+
+#Copy firebase config
 COPY src/main/resources/firebase_config.json src/main/resources/firebase_config.json
+
 # Grant permission to execute the gradlew script
 RUN chmod +x ./gradlew
 
@@ -15,7 +19,6 @@ COPY . .
 
 # Build the project inside the docker image
 RUN ./gradlew build -x test
-
 
 # Add Maintainer Info
 LABEL maintainer="Olszewski-Jakub"

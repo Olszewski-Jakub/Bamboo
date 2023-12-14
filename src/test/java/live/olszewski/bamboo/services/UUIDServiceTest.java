@@ -1,4 +1,4 @@
-package live.olszewski.bamboo;
+package live.olszewski.bamboo.services;
 
 import com.google.firebase.FirebaseApp;
 import live.olszewski.bamboo.auth.FirebaseConfig;
