@@ -81,9 +81,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserById(Long id) {
+    public String getUserEmailById(Long id) {
         UserDao userDao = userRepository.findUserById(id).orElseThrow(() -> new IllegalStateException("User with id " + id + " does not exists"));
         return userDao.getEmail();
+    }
+
+    @Override
+    public UserDto getUserById(Long id) {
+        UserDao userDao = userRepository.findUserById(id).orElseThrow(() -> new IllegalStateException("User with id " + id + " does not exists"));
+        return userDao.toUserDto();
     }
 
 }

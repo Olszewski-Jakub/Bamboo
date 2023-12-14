@@ -1,6 +1,5 @@
 package live.olszewski.bamboo.user;
 
-import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,24 +14,19 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-public class CurrentUserDetailsTest {
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserStorage userStorage;
+public class DeleteUserTest {
 
     @Autowired
     private TestUtils testUtils;
+
+    @Autowired
+    private UserService userService;
 
 
     @Container
@@ -65,16 +59,27 @@ public class CurrentUserDetailsTest {
     }
 
     @Test
-    public void currentUserDetails_ReturnsCorrectUserWhenExists() {
-        UserDao userDao = testUtils.generateUserDaoWithId(1L);
-        userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
+    public void deleteUser_DeletesUserFromRepository() {
         testUtils.addUsersToDatabase(1);
-        UserDto actualUser = userService.currentUserDetails();
-        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), actualUser));
+        Long id = 1L;
+        userService.deleteUser(id);
+        assertThrows(IllegalStateException.class, () -> userService.getUserById(id));
+
+    }
+    @Test
+    public void deleteUser_ThrowsExceptionWhenUserDoesNotExist() {
+        Long nonExistentId = 100L;
+        assertThrows(IllegalStateException.class, () -> userService.deleteUser(nonExistentId));
     }
 
     @Test
-    public void currentUserDetails_ThrowsExceptionWhenUserDoesNotExist() {
-        assertThrows(IllegalStateException.class, () -> userService.currentUserDetails());
+    public void deleteUser_DeletesCorrectUserWhenMultipleUsersExist() {
+        testUtils.addUsersToDatabase(3);
+        Long idToDelete = 2L;
+        userService.deleteUser(idToDelete);
+        assertThrows(IllegalStateException.class, () -> userService.getUserById(idToDelete));
+        // Verify the other users still exist
+        userService.getUserById(1L);
+        userService.getUserById(3L);
     }
 }

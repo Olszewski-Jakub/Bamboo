@@ -28,7 +28,7 @@ public class PandaConfigServiceImpl implements PandaConfigService {
     private UserService userService;
 
     private String getOwner(Long id) {
-        return userService.getUserById(id);
+        return userService.getUserEmailById(id);
     }
 
     private PandaConfigDto getPandaConfigDto(Long pandaId) {

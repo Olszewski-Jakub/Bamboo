@@ -35,8 +35,6 @@ public class GetAllUsersTest {
     @Autowired
     private TestUtils testUtils;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
@@ -97,8 +95,6 @@ public class GetAllUsersTest {
         testUtils.addUsersToDatabase(2);
         ArrayList<UserDto> users = new ArrayList<>(userService.getUsers());
         assertEquals(2, users.size());
-        System.out.println(users.get(0).getId());
-        System.out.println(users.get(1).getId());
         assertTrue(testUtils.areObjectEqual(users.get(0), testUtils.generateUserDaoWithId(1L).toUserDto()));
         assertTrue(testUtils.areObjectEqual(users.get(1), testUtils.generateUserDaoWithId(2L).toUserDto()));
     }

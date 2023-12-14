@@ -15,25 +15,21 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-public class CurrentUserDetailsTest {
+public class GetPandaOwnerTest {
+
+    @Autowired
+    private TestUtils testUtils;
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private UserStorage userStorage;
-
-    @Autowired
-    private TestUtils testUtils;
-
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
@@ -65,16 +61,17 @@ public class CurrentUserDetailsTest {
     }
 
     @Test
-    public void currentUserDetails_ReturnsCorrectUserWhenExists() {
-        UserDao userDao = testUtils.generateUserDaoWithId(1L);
-        userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
+    public void getPandaOwner_ReturnsCorrectOwnerId() {
+        userStorage.setCurrentUser("test1", "user1@test.com", "UUID1", true, 1L);
         testUtils.addUsersToDatabase(1);
-        UserDto actualUser = userService.currentUserDetails();
-        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), actualUser));
+        Long expectedOwnerId = 1L;
+        Long actualOwnerId = userService.getPandaOwner();
+        assertEquals(expectedOwnerId, actualOwnerId);
     }
 
     @Test
-    public void currentUserDetails_ThrowsExceptionWhenUserDoesNotExist() {
-        assertThrows(IllegalStateException.class, () -> userService.currentUserDetails());
+    public void getPandaOwner_ReturnsNullWhenNoPandaOwner() {
+        assertThrows(IllegalStateException.class, () -> userService.getUserById(1L));
     }
+
 }
