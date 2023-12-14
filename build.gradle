@@ -26,6 +26,7 @@ dependencies {
 	//Authorisation
 	implementation 'com.google.firebase:firebase-admin:8.2.0'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-test:3.1.5'
 	//Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -34,6 +35,7 @@ dependencies {
 	implementation 'com.google.code.gson:gson:2.8.8'
 
 	//Tests
+	testImplementation 'org.mockito:mockito-core:3.12.4'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.testcontainers:postgresql:1.18.3'
 	testImplementation 'org.testcontainers:junit-jupiter:1.18.3'

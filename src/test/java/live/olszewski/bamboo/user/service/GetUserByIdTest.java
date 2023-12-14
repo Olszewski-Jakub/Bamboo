@@ -1,7 +1,9 @@
-package live.olszewski.bamboo.user;
+package live.olszewski.bamboo.user.service;
 
-import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
+import live.olszewski.bamboo.user.UserDao;
+import live.olszewski.bamboo.user.UserDto;
+import live.olszewski.bamboo.user.UserService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +17,14 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-public class GetUserEmailByIdTest {
+public class GetUserByIdTest {
+
     @Autowired
     private TestUtils testUtils;
 
@@ -57,17 +60,17 @@ public class GetUserEmailByIdTest {
         testUtils.clearUserDatabase();
     }
 
-
     @Test
-    public void getUserEmailById_ReturnsCorrectEmailWhenUserExists() {
+    public void getUserById_ReturnsCorrectUserWhenUserExists() {
         UserDao userDao = testUtils.generateUserDaoWithId(1L);
         testUtils.addUsersToDatabase(1);
-        String actualEmail = userService.getUserEmailById(1L);
-        assertEquals(userDao.getEmail(), actualEmail);
+        UserDto actualUser = userService.getUserById(1L);
+        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), actualUser));
     }
 
     @Test
-    public void getUserEmailById_ThrowsExceptionWhenUserDoesNotExist() {
-        assertThrows(IllegalStateException.class, () -> userService.getUserEmailById(1L));
+    public void getUserById_ThrowsExceptionWhenUserDoesNotExist() {
+        assertThrows(IllegalStateException.class, () -> userService.getUserById(1L));
     }
+
 }

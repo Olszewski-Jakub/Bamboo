@@ -1,7 +1,10 @@
-package live.olszewski.bamboo.user;
+package live.olszewski.bamboo.user.service;
 
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
+import live.olszewski.bamboo.user.UserDto;
+import live.olszewski.bamboo.user.UserService;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,21 +18,25 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-public class GetPandaOwnerTest {
-
-    @Autowired
-    private TestUtils testUtils;
+public class GetAllUsersTest {
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private UserStorage userStorage;
+
+    @Autowired
+    private TestUtils testUtils;
+
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
@@ -60,18 +67,37 @@ public class GetPandaOwnerTest {
         testUtils.clearUserDatabase();
     }
 
+
     @Test
-    public void getPandaOwner_ReturnsCorrectOwnerId() {
+    public void getAllUsers() throws Exception {
+        testUtils.addUsersToDatabase(3);
         userStorage.setCurrentUser("test1", "user1@test.com", "UUID1", true, 1L);
-        testUtils.addUsersToDatabase(1);
-        Long expectedOwnerId = 1L;
-        Long actualOwnerId = userService.getPandaOwner();
-        assertEquals(expectedOwnerId, actualOwnerId);
+        assertEquals(3, userService.getUsers().size());
     }
 
     @Test
-    public void getPandaOwner_ReturnsNullWhenNoPandaOwner() {
-        assertThrows(IllegalStateException.class, () -> userService.getUserById(1L));
+    public void getUsers_ReturnsEmptyListWhenNoUsers() {
+        assertTrue(userService.getUsers().isEmpty());
     }
 
+    @Test
+    public void getUsers_ReturnsSingleUserWhenOneUserExists() {
+        testUtils.addUsersToDatabase(1);
+        assertEquals(1, userService.getUsers().size());
+    }
+
+    @Test
+    public void getUsers_ReturnsMultipleUsersWhenMultipleUsersExist() {
+        testUtils.addUsersToDatabase(3);
+        assertEquals(3, userService.getUsers().size());
+    }
+
+    @Test
+    public void getUsers_ReturnsCorrectUsers() {
+        testUtils.addUsersToDatabase(2);
+        ArrayList<UserDto> users = new ArrayList<>(userService.getUsers());
+        assertEquals(2, users.size());
+        assertTrue(testUtils.areObjectEqual(users.get(0), testUtils.generateUserDaoWithId(1L).toUserDto()));
+        assertTrue(testUtils.areObjectEqual(users.get(1), testUtils.generateUserDaoWithId(2L).toUserDto()));
+    }
 }

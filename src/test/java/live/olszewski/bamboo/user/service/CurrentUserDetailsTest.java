@@ -1,7 +1,10 @@
-package live.olszewski.bamboo.user;
+package live.olszewski.bamboo.user.service;
 
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
+import live.olszewski.bamboo.user.UserDao;
+import live.olszewski.bamboo.user.UserDto;
+import live.olszewski.bamboo.user.UserService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

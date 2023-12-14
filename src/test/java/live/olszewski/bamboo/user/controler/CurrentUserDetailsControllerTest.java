@@ -1,8 +1,9 @@
-package live.olszewski.bamboo.user;
+package live.olszewski.bamboo.user.controler;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
-import org.checkerframework.checker.units.qual.A;
+import live.olszewski.bamboo.user.UserDto;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,30 +13,27 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @Testcontainers
-public class GetAllUsersTest {
+public class CurrentUserDetailsControllerTest {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserStorage userStorage;
+    private MockMvc mockMvc;
 
     @Autowired
     private TestUtils testUtils;
 
-
+    @Autowired
+    private UserStorage userStorage;
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("integration-tests-db")
@@ -51,7 +49,7 @@ public class GetAllUsersTest {
     }
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws FirebaseAuthException {
         postgres.start();
     }
 
@@ -67,35 +65,11 @@ public class GetAllUsersTest {
 
 
     @Test
-    public void getAllUsers() throws Exception {
-        testUtils.addUsersToDatabase(3);
-        userStorage.setCurrentUser("test1", "user1@test.com", "UUID1", true, 1L);
-        assertEquals(3, userService.getUsers().size());
-    }
-
-    @Test
-    public void getUsers_ReturnsEmptyListWhenNoUsers() {
-        assertTrue(userService.getUsers().isEmpty());
-    }
-
-    @Test
-    public void getUsers_ReturnsSingleUserWhenOneUserExists() {
+    public void currentUserDetails_whenUserExists_returnsUserDetails() throws Exception {
+        testUtils.setUserStorageByUserId(1L, true);
         testUtils.addUsersToDatabase(1);
-        assertEquals(1, userService.getUsers().size());
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user/current"))
+                .andExpect(status().isOk());
     }
 
-    @Test
-    public void getUsers_ReturnsMultipleUsersWhenMultipleUsersExist() {
-        testUtils.addUsersToDatabase(3);
-        assertEquals(3, userService.getUsers().size());
-    }
-
-    @Test
-    public void getUsers_ReturnsCorrectUsers() {
-        testUtils.addUsersToDatabase(2);
-        ArrayList<UserDto> users = new ArrayList<>(userService.getUsers());
-        assertEquals(2, users.size());
-        assertTrue(testUtils.areObjectEqual(users.get(0), testUtils.generateUserDaoWithId(1L).toUserDto()));
-        assertTrue(testUtils.areObjectEqual(users.get(1), testUtils.generateUserDaoWithId(2L).toUserDto()));
-    }
 }

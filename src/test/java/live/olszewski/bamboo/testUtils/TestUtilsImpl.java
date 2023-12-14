@@ -1,5 +1,6 @@
 package live.olszewski.bamboo.testUtils;
 
+import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.user.UserDao;
 import live.olszewski.bamboo.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ public class TestUtilsImpl implements TestUtils {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private UserStorage userStorage;
+
     /**
      * Deletes all users from database
      */
@@ -58,7 +63,7 @@ public class TestUtilsImpl implements TestUtils {
      */
     @Override
     public UserDao generateUserDaoWithId(Long id) {
-        return new UserDao(id, "UUID" + id,"user" + id ,"user" + id,  "user" + id + "@test.com", id % 3 == 0);
+        return new UserDao(id, "UUID" + id,"user" + id ,"user" + id,  "user" + id + "@test.com", (id+2) % 3 == 0);
     }
 
     /**
@@ -70,9 +75,22 @@ public class TestUtilsImpl implements TestUtils {
     public void addUsersToDatabase(int numberOfUsers) {
         List<UserDao> users = new ArrayList<>();
         for (int id = 1; id <= numberOfUsers; id++) {
-            UserDao user = new UserDao( "UUID" + id,"user" + id ,"user" + id,  "user" + id + "@test.com", id % 3 == 0);
+            UserDao user = new UserDao( "UUID" + id,"user" + id ,"user" + id,  "user" + id + "@test.com", (id+2) % 3 == 0);
             users.add(user);
         }
         userRepository.saveAll(users);
     }
+
+    /**
+     * Sets current user in userStorage to user with given id
+     * @param id id of user
+     * @param administrator true if user is administrator, false otherwise
+     */
+    @Override
+    public void setUserStorageByUserId(Long id, boolean administrator) {
+        UserDao userDao = generateUserDaoWithId(id);
+        userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), administrator, userDao.getId());
+    }
+
+
 }

@@ -70,4 +70,17 @@ public class UserDto {
     public void setAdministrator(Boolean administrator) {
         isAdministrator = administrator;
     }
+
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", UID='" + UID + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", isAdministrator=" + isAdministrator +
+                '}';
+    }
 }
