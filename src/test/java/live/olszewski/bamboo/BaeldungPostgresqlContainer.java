@@ -13,7 +13,7 @@ public class BaeldungPostgresqlContainer extends PostgreSQLContainer<BaeldungPos
 
     private BaeldungPostgresqlContainer() {
         super(IMAGE_VERSION);
-        withDatabaseName("postgre-test");
+        withDatabaseName("");
         withUsername("postgre");
         withPassword("admin");
         withInitScript("init.sql");
