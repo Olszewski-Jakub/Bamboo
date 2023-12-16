@@ -14,7 +14,7 @@ import static java.lang.Long.parseLong;
 
 public interface RegisterPandaService {
 
-    public void addPandaDevice(RegisterPanda registerPanda);
-    public void deletePandaDevice(Long id);
+    void addPandaDevice(RegisterPanda registerPanda);
+    void deletePandaDevice(Long id);
 
 }

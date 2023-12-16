@@ -1,6 +1,10 @@
 package live.olszewski.bamboo.testUtils;
 
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
+import live.olszewski.bamboo.panda.PandaDao;
+import live.olszewski.bamboo.panda.PandaRepository;
+import live.olszewski.bamboo.panda.register.RegisterPanda;
+import live.olszewski.bamboo.services.uuid.UUIDService;
 import live.olszewski.bamboo.user.UserDao;
 import live.olszewski.bamboo.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,8 @@ public class TestUtilsImpl implements TestUtils {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PandaRepository pandaRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -24,12 +30,24 @@ public class TestUtilsImpl implements TestUtils {
     @Autowired
     private UserStorage userStorage;
 
+    @Autowired
+    private UUIDService uuidService;
+
     /**
      * Deletes all users from database
      */
     public void clearUserDatabase() {
         userRepository.deleteAll();
         jdbcTemplate.execute("ALTER SEQUENCE user_sequence RESTART WITH 1");
+    }
+
+    /**
+     * Deletes all Panda devices from database
+     */
+    @Override
+    public void clearPandaDatabase() {
+        pandaRepository.deleteAll();
+        jdbcTemplate.execute("ALTER SEQUENCE panda_sequence RESTART WITH 1");
     }
 
     /**
@@ -90,6 +108,28 @@ public class TestUtilsImpl implements TestUtils {
     public void setUserStorageByUserId(Long id, boolean administrator) {
         UserDao userDao = generateUserDaoWithId(id);
         userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), administrator, userDao.getId());
+    }
+
+    /**
+     * Generates RegisterPanda with given id
+     * @param id id of RegisterPanda
+     * @return RegisterPanda with given id
+     */
+    @Override
+    public RegisterPanda generateRegisterPandaWithId(Long id) {
+        return new RegisterPanda("location" + id, "name" + id);
+    }
+
+    /**
+     * Generates PandaDao with given id
+     * @param id id of PandaDao
+     * @return PandaDao with given id
+     */
+    @Override
+    public PandaDao generatePandaDaoWithId(Long id) {
+        PandaDao pandaDao=new PandaDao(id,"", "location" + id, "name" + id, true, id, "api_key" + id);
+        pandaDao.setUuid(uuidService.generateUUIDFromString(pandaDao.valuesForUuidGeneration()).toString());
+        return pandaDao;
     }
 
 

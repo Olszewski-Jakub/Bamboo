@@ -15,10 +15,10 @@ import java.util.Optional;
 
 public interface PandaService {
 
-    public List<PandaDto> getAllPandaDevices();
+    List<PandaDto> getAllPandaDevices();
 
-    public List<PandaDto> getPandaDevicesByOwner();
+    List<PandaDto> getPandaDevicesByOwner();
 
-    public Boolean updatePandaApiKey(Long pandaId, String apiKey);
+    Boolean updatePandaApiKey(Long pandaId, String apiKey);
 
 }

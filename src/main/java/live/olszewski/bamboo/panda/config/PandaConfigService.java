@@ -7,6 +7,6 @@ import org.springframework.http.ResponseEntity;
 public interface PandaConfigService {
 
 
-    public ResponseEntity<byte[]> downloadPandaConfig(Long pandaId);
+    ResponseEntity<byte[]> downloadPandaConfig(Long pandaId);
 
 }
