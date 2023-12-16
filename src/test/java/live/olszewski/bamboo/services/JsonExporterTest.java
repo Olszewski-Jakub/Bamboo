@@ -1,14 +1,11 @@
 package live.olszewski.bamboo.services;
 
-import live.olszewski.bamboo.BaeldungPostgresqlContainer;
 import live.olszewski.bamboo.panda.config.PandaConfigDto;
 import live.olszewski.bamboo.services.jsonExporter.JsonExporterService;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,8 +18,8 @@ public class JsonExporterTest {
 
     @Autowired
     JsonExporterService jsonExporterService;
-    @ClassRule
-    public static PostgreSQLContainer<BaeldungPostgresqlContainer> postgreSQLContainer = BaeldungPostgresqlContainer.getInstance();
+    //@ClassRule
+    //  public static PostgreSQLContainer<BaeldungPostgresqlContainer> postgreSQLContainer = BaeldungPostgresqlContainer.getInstance();
 
     @Test
     public void exportReturnsCorrectJsonForString() {

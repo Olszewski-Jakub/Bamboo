@@ -1,8 +1,6 @@
 package live.olszewski.bamboo.user.controler;
 
-import live.olszewski.bamboo.BaeldungPostgresqlContainer;
 import live.olszewski.bamboo.testUtils.TestUtils;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,8 +23,8 @@ public class CurrentUserDetailsControllerTest {
     @Autowired
     private TestUtils testUtils;
 
-    @ClassRule
-    public static PostgreSQLContainer<BaeldungPostgresqlContainer> postgreSQLContainer = BaeldungPostgresqlContainer.getInstance();
+    //@ClassRule
+    //  public static PostgreSQLContainer<BaeldungPostgresqlContainer> postgreSQLContainer = BaeldungPostgresqlContainer.getInstance();
 
     @BeforeEach
     public void clearDatabase() {
