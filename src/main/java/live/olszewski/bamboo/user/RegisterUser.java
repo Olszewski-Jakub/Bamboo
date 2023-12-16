@@ -3,13 +3,13 @@ package live.olszewski.bamboo.user;
 /**
  * Represents a user registration request.
  */
+@SuppressWarnings("ALL")
 public class RegisterUser {
 
     private String name;
     private String surname;
     private String email;
     private String password;
-    private String role;
 
     /**
      * Default constructor.
