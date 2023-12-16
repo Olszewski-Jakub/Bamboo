@@ -46,4 +46,13 @@ public class UserStorageImpl implements UserStorage {
         this.isAdministrator = isAdministrator;
         this.id = id;
     }
+
+    @Override
+    public void clearCurrentUser() {
+        this.currentUserName = null;
+        this.currentUserEmail = null;
+        this.currentUserUuid = null;
+        this.isAdministrator = null;
+        this.id = null;
+    }
 }

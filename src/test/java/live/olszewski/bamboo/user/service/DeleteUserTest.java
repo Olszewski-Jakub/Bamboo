@@ -1,22 +1,18 @@
 package live.olszewski.bamboo.user.service;
 
+import live.olszewski.bamboo.BaeldungPostgresqlContainer;
 import live.olszewski.bamboo.testUtils.TestUtils;
 import live.olszewski.bamboo.user.UserService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -30,29 +26,8 @@ public class DeleteUserTest {
     private UserService userService;
 
 
-    @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
-            .withDatabaseName("integration-tests-db")
-            .withUsername("postgres")
-            .withPassword("admin")
-            .withInitScript("init.sql");
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-
-    @BeforeAll
-    public static void setUp() {
-        postgres.start();
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        postgres.stop();
-    }
+    @ClassRule
+    public static PostgreSQLContainer<BaeldungPostgresqlContainer> postgreSQLContainer = BaeldungPostgresqlContainer.getInstance();
 
     @BeforeEach
     public void clearDatabase() {

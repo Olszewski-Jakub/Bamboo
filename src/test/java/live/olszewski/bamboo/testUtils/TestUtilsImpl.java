@@ -1,5 +1,6 @@
 package live.olszewski.bamboo.testUtils;
 
+import live.olszewski.bamboo.apiKeys.ApiKeysRepository;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
@@ -15,6 +16,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class provides utility methods for testing.
+ * It includes methods for clearing databases, comparing objects, generating test data, and setting up user storage.
+ */
 @Service
 public class TestUtilsImpl implements TestUtils {
 
@@ -23,6 +28,9 @@ public class TestUtilsImpl implements TestUtils {
 
     @Autowired
     private PandaRepository pandaRepository;
+
+    @Autowired
+    private ApiKeysRepository apiKeysRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -34,7 +42,17 @@ public class TestUtilsImpl implements TestUtils {
     private UUIDService uuidService;
 
     /**
-     * Deletes all users from database
+     * Deletes all data from all databases and resets all sequences.
+     */
+    @Override
+    public void clearAllDatabases() {
+        clearUserDatabase();
+        clearPandaDatabase();
+        clearApiKeysDatabase();
+    }
+
+    /**
+     * Deletes all users from the database and resets the user sequence.
      */
     public void clearUserDatabase() {
         userRepository.deleteAll();
@@ -42,7 +60,7 @@ public class TestUtilsImpl implements TestUtils {
     }
 
     /**
-     * Deletes all Panda devices from database
+     * Deletes all Panda devices from the database and resets the panda sequence.
      */
     @Override
     public void clearPandaDatabase() {
@@ -51,12 +69,29 @@ public class TestUtilsImpl implements TestUtils {
     }
 
     /**
-     * Compares fields of two objects
-     * @param obj1 first object to compare
-     * @param obj2 second object to compare
+     * Deletes all API keys from the database and resets the API keys sequence.
+     */
+    @Override
+    public void clearApiKeysDatabase() {
+        apiKeysRepository.deleteAll();
+        jdbcTemplate.execute("ALTER SEQUENCE api_keys_sequence RESTART WITH 1");
+    }
+
+    /**
+     * Clears the current user from the user storage.
+     */
+    @Override
+    public void clearUserStorage() {
+        userStorage.clearCurrentUser();
+    }
+
+    /**
+     * Compares all fields of two objects for equality.
+     *
+     * @param obj1 the first object to compare
+     * @param obj2 the second object to compare
      * @return true if all fields are equal, false otherwise
      */
-
     @Override
     public boolean areObjectEqual(Object obj1, Object obj2) {
         try {
@@ -75,34 +110,37 @@ public class TestUtilsImpl implements TestUtils {
     }
 
     /**
-     * Generates UserDao with given id
-     * @param id id of user
-     * @return UserDao with given id
+     * Generates a UserDao object with the given id.
+     *
+     * @param id the id of the user
+     * @return a UserDao object with the given id
      */
     @Override
     public UserDao generateUserDaoWithId(Long id) {
-        return new UserDao(id, "UUID" + id,"user" + id ,"user" + id,  "user" + id + "@test.com", (id+2) % 3 == 0);
+        return new UserDao(id, "UUID" + id, "user" + id, "user" + id, "user" + id + "@test.com", (id + 2) % 3 == 0);
     }
 
     /**
-     * Generates given number of users and saves them to database
-     * id of users starts from 1
-     * @param numberOfUsers number of users to generate
+     * Generates a given number of users and saves them to the database.
+     * The id of the users starts from 1.
+     *
+     * @param numberOfUsers the number of users to generate
      */
     @Override
     public void addUsersToDatabase(int numberOfUsers) {
         List<UserDao> users = new ArrayList<>();
         for (int id = 1; id <= numberOfUsers; id++) {
-            UserDao user = new UserDao( "UUID" + id,"user" + id ,"user" + id,  "user" + id + "@test.com", (id+2) % 3 == 0);
+            UserDao user = new UserDao("UUID" + id, "user" + id, "user" + id, "user" + id + "@test.com", (id + 2) % 3 == 0);
             users.add(user);
         }
         userRepository.saveAll(users);
     }
 
     /**
-     * Sets current user in userStorage to user with given id
-     * @param id id of user
-     * @param administrator true if user is administrator, false otherwise
+     * Sets the current user in the user storage to the user with the given id.
+     *
+     * @param id            the id of the user
+     * @param administrator true if the user is an administrator, false otherwise
      */
     @Override
     public void setUserStorageByUserId(Long id, boolean administrator) {
@@ -111,9 +149,10 @@ public class TestUtilsImpl implements TestUtils {
     }
 
     /**
-     * Generates RegisterPanda with given id
-     * @param id id of RegisterPanda
-     * @return RegisterPanda with given id
+     * Generates a RegisterPanda object with the given id.
+     *
+     * @param id the id of the RegisterPanda
+     * @return a RegisterPanda object with the given id
      */
     @Override
     public RegisterPanda generateRegisterPandaWithId(Long id) {
@@ -121,16 +160,15 @@ public class TestUtilsImpl implements TestUtils {
     }
 
     /**
-     * Generates PandaDao with given id
-     * @param id id of PandaDao
-     * @return PandaDao with given id
+     * Generates a PandaDao object with the given id.
+     *
+     * @param id the id of the PandaDao
+     * @return a PandaDao object with the given id
      */
     @Override
     public PandaDao generatePandaDaoWithId(Long id) {
-        PandaDao pandaDao=new PandaDao(id,"", "location" + id, "name" + id, true, id, "api_key" + id);
+        PandaDao pandaDao = new PandaDao(id, "", "location" + id, "name" + id, true, id, "api_key" + id);
         pandaDao.setUuid(uuidService.generateUUIDFromString(pandaDao.valuesForUuidGeneration()).toString());
         return pandaDao;
     }
-
-
 }

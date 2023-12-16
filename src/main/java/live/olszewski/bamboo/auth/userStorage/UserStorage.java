@@ -10,4 +10,6 @@ public interface UserStorage {
     Boolean isAdministrator();
 
     void setCurrentUser(String name, String email, String uuid, Boolean isAdministrator, Long id);
+
+    void clearCurrentUser();
 }

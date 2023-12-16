@@ -2,7 +2,6 @@ package live.olszewski.bamboo.apiKeys;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,8 +9,8 @@ import java.time.LocalDateTime;
 public class ApiKeyDao {
     @Id
     @SequenceGenerator(
-            name = "api_sequence",
-            sequenceName = "api_sequence",
+            name = "api_keys_sequence",
+            sequenceName = "api_keys_sequence",
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE,

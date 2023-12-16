@@ -1,22 +1,27 @@
-version: '3.8'
-services:
-  db:
-    container_name: postgres
-    image: postgres:16
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: bamboo
-    ports:
-      - "5432:5432"
-  app:
-    container_name: bamboo
-    environment:
-      POSTGRES_HOST: postgres
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - db
-    ports:
-      - "8080:8080"
+# This is a Docker Compose file that is used to define and run multi-container Docker applications.
+# It uses YAML format to configure the application's services, networks and volumes.
+version: '3.8' # The version of Docker Compose file format
+
+services: # Defines the services that make up the application
+
+  db: # The first service is a PostgreSQL database
+    container_name: postgres # The name of the container
+    image: postgres:16 # The Docker image to use for this service
+    environment: # Environment variables for the service
+      POSTGRES_USER: postgres # The username for the PostgreSQL instance
+      POSTGRES_PASSWORD: admin # The password for the PostgreSQL instance
+      POSTGRES_DB: bamboo # The name of the default database
+    ports: # The ports to expose
+      - "5432:5432" # Maps the service's port 5432 to the host's port 5432
+
+  app: # The second service is the application
+    container_name: bamboo # The name of the container
+    environment: # Environment variables for the service
+      POSTGRES_HOST: postgres # The host of the PostgreSQL database
+    build: # Build configuration for the service
+      context: . # The build context is the current directory
+      dockerfile: Dockerfile # The Dockerfile to use for building the image
+    depends_on: # Specifies the dependencies of the service
+      - db # The application service depends on the db service
+    ports: # The ports to expose
+      - "8080:8080" # Maps the service's port 8080 to the host's port 8080
