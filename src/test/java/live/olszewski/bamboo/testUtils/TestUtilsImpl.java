@@ -41,9 +41,6 @@ public class TestUtilsImpl implements TestUtils {
     @Autowired
     private UUIDService uuidService;
 
-    /**
-     * Deletes all data from all databases and resets all sequences.
-     */
     @Override
     public void clearAllDatabases() {
         clearUserDatabase();
