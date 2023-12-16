@@ -1,5 +1,7 @@
 package live.olszewski.bamboo;
 
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
@@ -30,10 +32,21 @@ public class BaeldungPostgresqlContainer extends PostgreSQLContainer<BaeldungPos
     public static BaeldungPostgresqlContainer getInstance() {
         if (container == null) {
             container = new BaeldungPostgresqlContainer();
+            container.withDatabaseName("integration-tests-db")
+                    .withUsername("postgres")
+                    .withPassword("admin")
+                    .withInitScript("init.sql");
+
         }
         return container;
     }
 
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", container::getJdbcUrl);
+        registry.add("spring.datasource.username", container::getUsername);
+        registry.add("spring.datasource.password", container::getPassword);
+    }
     /**
      * This method starts the PostgreSQL Docker container and sets the system properties
      * for the database URL, username, and password.
