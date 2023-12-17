@@ -26,37 +26,51 @@ public class ApiConfig {
 
     /**
      * This method returns the API path for the panda device endpoint.
+     *
      * @return the API path for the panda device endpoint
      */
     @Bean
-    public String pandaDevicePath(){
+    public String pandaDevicePath() {
         return ROOT_PATH + "/panda/device";
     }
 
     /**
      * This method returns the API path for the register panda endpoint.
+     *
      * @return the API path for the register panda endpoint
      */
     @Bean
-    public String registerPandaPath(){
+    public String registerPandaPath() {
         return ROOT_PATH + "/panda/register";
     }
 
     /**
      * This method returns the API path for the API key endpoint.
+     *
      * @return the API path for the API key endpoint
      */
     @Bean
-    public String apiKeyPath(){
+    public String apiKeyPath() {
         return ROOT_PATH + "/apiKey";
     }
 
     /**
      * This method returns the API path for the panda config endpoint.
+     *
      * @return the API path for the panda config endpoint
      */
     @Bean
-    public String pandaConfigPath(){
+    public String pandaConfigPath() {
         return ROOT_PATH + "/panda/config";
+    }
+
+    /**
+     * This method returns the API path for the panda connection status endpoint.
+     *
+     * @return the API path for the panda connection status endpoint
+     */
+    @Bean
+    public String pandaConnectionStatusPath() {
+        return ROOT_PATH + "/panda/connection/status";
     }
 }

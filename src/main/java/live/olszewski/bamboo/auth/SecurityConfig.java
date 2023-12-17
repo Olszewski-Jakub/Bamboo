@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import live.olszewski.bamboo.apiKeys.ApiKeysService;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,29 +22,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Autowired
+    private FirebaseAuth firebaseAuth;
 
-    private final FirebaseAuth firebaseAuth;
-    private final UserStorage userStorage;
-    private final UserService userService;
-    private final ApiKeysService apiKeysService;
-    private final SecurityPathsConfig securityPathsConfig;
+    @Autowired
+    private UserStorage userStorage;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ApiKeysService apiKeysService;
+    @Autowired
+    private SecurityPathsConfig securityPathsConfig;
 
-    /**
-     * Constructor for the SecurityConfig class.
-     *
-     * @param firebaseAuth        An instance of FirebaseAuth for Firebase authentication.
-     * @param userStorage         An instance of UserStorage to store user data.
-     * @param apiKeysService      An instance of ApiKeysService to handle API key-related operations.
-     * @param securityPathsConfig An instance of SecurityPathsConfig to get the security paths.
-     * @param userService         An instance of UserService to handle user-related operations.
-     */
-    public SecurityConfig(FirebaseAuth firebaseAuth, UserStorage userStorage, ApiKeysService apiKeysService, SecurityPathsConfig securityPathsConfig, UserService userService) {
-        this.firebaseAuth = firebaseAuth;
-        this.userStorage = userStorage;
-        this.apiKeysService = apiKeysService;
-        this.securityPathsConfig = securityPathsConfig;
-        this.userService = userService;
-    }
 
     /**
      * This method creates a security filter chain for Firebase authentication.
