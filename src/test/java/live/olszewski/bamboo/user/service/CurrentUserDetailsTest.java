@@ -1,9 +1,9 @@
 package live.olszewski.bamboo.user.service;
 
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
 import live.olszewski.bamboo.user.UserDao;
-import live.olszewski.bamboo.user.UserDto;
 import live.olszewski.bamboo.user.UserService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -70,8 +71,8 @@ public class CurrentUserDetailsTest {
         UserDao userDao = testUtils.generateUserDaoWithId(1L);
         userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
         testUtils.addUsersToDatabase(1);
-        UserDto actualUser = userService.currentUserDetails();
-        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), actualUser));
+        ResponseEntity<ApiResponseDto<?>> actualUser = userService.currentUserDetails();
+        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), actualUser.getBody().getData()));
     }
 
     @Test

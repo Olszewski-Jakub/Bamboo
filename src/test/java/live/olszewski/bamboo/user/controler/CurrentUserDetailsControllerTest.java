@@ -1,7 +1,6 @@
 package live.olszewski.bamboo.user.controler;
 
 import com.google.firebase.auth.FirebaseAuthException;
-import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,8 +30,6 @@ public class CurrentUserDetailsControllerTest {
     @Autowired
     private TestUtils testUtils;
 
-    @Autowired
-    private UserStorage userStorage;
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("integration-tests-db")

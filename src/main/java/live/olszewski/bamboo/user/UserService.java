@@ -1,16 +1,18 @@
 package live.olszewski.bamboo.user;
 
-import java.util.List;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import org.springframework.http.ResponseEntity;
 
 
 public interface UserService {
 
-    List<UserDto> getUsers();
-    void addNewUser(RegisterUser registerUser);
+    ResponseEntity<ApiResponseDto<?>> getUsers();
 
-    UserDto currentUserDetails();
+    ResponseEntity<ApiResponseDto<?>> addNewUser(RegisterUser registerUser);
 
-    void deleteUser(Long id);
+    ResponseEntity<ApiResponseDto<?>> currentUserDetails();
+
+    ResponseEntity<ApiResponseDto<?>> deleteUser(Long id);
 
     Long getPandaOwner();
 

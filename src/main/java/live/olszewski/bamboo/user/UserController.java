@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 /**
  * Controller for handling user-related requests.
  */
@@ -16,14 +18,13 @@ import java.util.List;
 @Tag(name = "User", description = "User related endpoints")
 public class UserController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     /**
      * Endpoint for getting all users.
+     *
      * @return a list of all users.
      */
     @GetMapping
@@ -40,12 +41,14 @@ public class UserController {
                             description = "Unauthorized"
                     )
             })
-    public List<UserDto> getUsers() {
+    public ResponseEntity<ApiResponseDto<?>> getUsers() {
+
         return userService.getUsers();
     }
 
     /**
      * Endpoint for registering a new user.
+     *
      * @param user the user to register.
      */
     @PostMapping
@@ -78,12 +81,13 @@ public class UserController {
                     "  \"password\": \"password\"\n" +
                     "}"
     )
-    public void registerNewUser(@RequestBody RegisterUser user) {
-        userService.addNewUser(user);
+    public ResponseEntity<ApiResponseDto<?>> registerNewUser(@RequestBody RegisterUser user) {
+        return userService.addNewUser(user);
     }
 
     /**
      * Endpoint for deleting a user.
+     *
      * @param id the id of the user to delete.
      */
     @DeleteMapping(path = "{userId}")
@@ -111,14 +115,11 @@ public class UserController {
             required = true,
             example = "1"
     )
-    public void deleteUser(@PathVariable("userId") Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<ApiResponseDto<?>> deleteUser(@PathVariable("userId") Long id) {
+        return userService.deleteUser(id);
     }
 
-    /**
-     * Endpoint for getting the details of the current user.
-     * @return the details of the current user.
-     */
+
     @GetMapping(path = "/current")
     @Operation(
             description = "Get current user details",
@@ -134,7 +135,7 @@ public class UserController {
                     )
             }
     )
-    public UserDto currentUserDetails() {
+    public ResponseEntity<ApiResponseDto<?>> currentUserDetails() {
         return userService.currentUserDetails();
     }
 }

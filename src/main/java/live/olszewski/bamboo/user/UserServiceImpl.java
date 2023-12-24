@@ -3,19 +3,16 @@ package live.olszewski.bamboo.user;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
-/**
- * This class implements the UserService interface.
- * It provides methods for managing users, such as getting all users, adding a new user, deleting a user, and getting user details.
- * It uses the @Service annotation to indicate that it is a service class.
- */
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,33 +20,23 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private UserStorage userStorage;
+    @Autowired
+    private ApiResponseBuilder apiResponseBuilder;
 
-    /**
-     * This method returns a list of all users.
-     * It checks if the current user is an administrator before returning the list.
-     * If the current user is not an administrator, it throws an AccessDeniedException.
-     *
-     * @return a list of all users
-     */
+
     @Override
-    public List<UserDto> getUsers() {
+    public ResponseEntity<ApiResponseDto<?>> getUsers() {
         if (!userStorage.isAdministrator())
-            throw new AccessDeniedException("User is not administrator");
-        return userRepository.findAll().stream().map(UserDao::toUserDto).toList();
+            return ResponseEntity.status(403).body(apiResponseBuilder.buildErrorResponse(403, "Unauthorized"));
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Success", userRepository.findAll().stream().map(UserDao::toUserDto).toList()));
     }
 
-    /**
-     * This method adds a new user.
-     * It checks if a user with the same email already exists before adding the new user.
-     * If a user with the same email already exists, it throws an IllegalStateException.
-     *
-     * @param registerUser the new user to add
-     */
+
     @Override
-    public void addNewUser(RegisterUser registerUser) {
+    public ResponseEntity<ApiResponseDto<?>> addNewUser(RegisterUser registerUser) {
         Optional<UserDao> userOptional = userRepository.findUserByEmail(registerUser.getEmail());
         if (userOptional.isPresent()) {
-            throw new IllegalStateException("User already exists");
+            return ResponseEntity.status(409).body(apiResponseBuilder.buildErrorResponse(409, "User already exists"));
         }
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                 .setEmail(registerUser.getEmail())
@@ -63,34 +50,26 @@ public class UserServiceImpl implements UserService {
             userRepository.save(userDao);
             System.out.println(userDao);
         } catch (FirebaseAuthException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Internal server error" + e.getMessage()));
         }
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "User added successfully", null));
     }
 
-    /**
-     * This method returns the details of the current user.
-     *
-     * @return the details of the current user
-     */
     @Override
-    public UserDto currentUserDetails() {
-        return userRepository.findUserByEmail(userStorage.getCurrentUserEmail()).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists")).toUserDto();
+    public ResponseEntity<ApiResponseDto<?>> currentUserDetails() {
+        Optional<UserDao> userOptional = userRepository.findUserByEmail(userStorage.getCurrentUserEmail());
+        return userOptional.<ResponseEntity<ApiResponseDto<?>>>map(userDao -> ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Current details of user with id:" + userStorage.getCurrentUserId().toString(), userDao.toUserDto()))).orElseGet(() -> ResponseEntity.status(404).body(apiResponseBuilder.buildErrorResponse(404, "User not found")));
     }
 
-    /**
-     * This method deletes a user by their id.
-     * It checks if a user with the given id exists before deleting the user.
-     * If a user with the given id does not exist, it throws an IllegalStateException.
-     *
-     * @param id the id of the user to delete
-     */
+
     @Override
-    public void deleteUser(Long id) {
+    public ResponseEntity<ApiResponseDto<?>> deleteUser(Long id) {
         boolean exists = userRepository.existsById(id);
         if (!exists) {
-            throw new IllegalStateException("User with id " + id + " deos not exists");
+            return ResponseEntity.status(404).body(apiResponseBuilder.buildErrorResponse(404, "User with id " + id + " does not exists"));
         }
         userRepository.deleteById(id);
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "User with id" + id + "removed successfully", null));
     }
 
     /**
