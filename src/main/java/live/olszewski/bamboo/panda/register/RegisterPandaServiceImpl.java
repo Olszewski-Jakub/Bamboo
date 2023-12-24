@@ -1,10 +1,13 @@
 package live.olszewski.bamboo.panda.register;
 
+import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.services.uuid.UUIDService;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,8 +24,11 @@ public class RegisterPandaServiceImpl implements RegisterPandaService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ApiResponseBuilder apiResponseBuilder;
+
     @Override
-    public void addPandaDevice(RegisterPanda registerPanda) {
+    public ResponseEntity<ApiResponseDto<?>> addPandaDevice(RegisterPanda registerPanda) {
         PandaDao registerPandaDao = new PandaDao();
         registerPandaDao.setLocation(registerPanda.getLocation());
         registerPandaDao.setName(registerPanda.getName());
@@ -33,19 +39,21 @@ public class RegisterPandaServiceImpl implements RegisterPandaService {
         ).toString());
         Optional<PandaDao> registerPandaDaoOptional = pandaRepository.findDeviceByUUID(registerPandaDao.getUuid());
         if (registerPandaDaoOptional.isPresent()) {
-            throw new IllegalStateException("Device with this parameters already exists");
+            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Device with this parameters already exists"));
         }
 
         pandaRepository.save(registerPandaDao);
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Device registered successfully", null));
     }
 
     @Override
-    public void deletePandaDevice(Long id) {
+    public ResponseEntity<ApiResponseDto<?>> deletePandaDevice(Long id) {
         boolean exists = pandaRepository.existsById(id);
         if (!exists) {
-            throw new IllegalStateException("Device with id " + id + " deos not exists");
+            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Device with id " + id + " deos not exists"));
         }
         pandaRepository.deleteById(id);
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Device deleted successfully", null));
     }
 
 }

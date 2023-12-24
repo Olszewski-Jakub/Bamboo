@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static java.lang.Long.parseLong;
 
 @RestController
 @RequestMapping(path = "#{apiConfig.registerPandaPath}")
@@ -42,8 +42,8 @@ public class RegisterPandaController {
             example = "{\"name\":\"Panda\",\"location\":\"Warsaw\"}"
 
     )
-    public void registerNewPandaDevice(@RequestBody RegisterPanda registerPanda) {
-        registerPandaService.addPandaDevice(registerPanda);
+    public ResponseEntity<ApiResponseDto<?>> registerNewPandaDevice(@RequestBody RegisterPanda registerPanda) {
+        return registerPandaService.addPandaDevice(registerPanda);
     }
 
     @DeleteMapping(path = "{pandaId}")
@@ -70,8 +70,8 @@ public class RegisterPandaController {
             required = true,
             example = "1"
     )
-    public void deletePandaDevice(@PathVariable("pandaId") Long id) {
-        registerPandaService.deletePandaDevice(id);
+    public ResponseEntity<ApiResponseDto<?>> deletePandaDevice(@PathVariable("pandaId") Long id) {
+        return registerPandaService.deletePandaDevice(id);
     }
 
 }

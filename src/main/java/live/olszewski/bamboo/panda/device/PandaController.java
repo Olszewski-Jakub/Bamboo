@@ -1,16 +1,14 @@
 package live.olszewski.bamboo.panda.device;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import live.olszewski.bamboo.panda.PandaDto;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "#{apiConfig.pandaDevicePath}")
@@ -36,7 +34,7 @@ public class PandaController {
             }
 
     )
-    public List<PandaDto> getAllPandaDevices() {
+    public ResponseEntity<ApiResponseDto<?>> getAllPandaDevices() {
         return pandaService.getAllPandaDevices();
     }
 
@@ -58,7 +56,7 @@ public class PandaController {
                     )
             }
     )
-    public List<PandaDto> getPandaDEviesByOwner() {
+    public ResponseEntity<ApiResponseDto<?>> getPandaDEviesByOwner() {
         return pandaService.getPandaDevicesByOwner();
     }
 

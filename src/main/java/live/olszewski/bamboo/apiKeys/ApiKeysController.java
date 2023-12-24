@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * This class represents the API Keys Controller.
@@ -52,7 +52,7 @@ public class ApiKeysController {
             required = true,
             example = "1"
     )
-    public String addNewApiKey(String pandaId) {
+    public ResponseEntity<ApiResponseDto<?>> addNewApiKey(String pandaId) {
         return apiKeysService.addNewApiKey(pandaId);
     }
 
@@ -163,7 +163,7 @@ public class ApiKeysController {
                     )
             }
     )
-    public List<ApiKeyDto> getApiKeyByOwner() {
+    public ResponseEntity<ApiResponseDto<?>> getApiKeyByOwner() {
         return apiKeysService.getApiKeyByOwner();
     }
 
@@ -213,7 +213,7 @@ public class ApiKeysController {
             required = true,
             example = "1"
     )
-    public ApiKeyDto getApiKeyByPanda(String pandaId) {
+    public ResponseEntity<ApiResponseDto<?>> getApiKeyByPanda(String pandaId) {
         return apiKeysService.getApiKeyByPanda(pandaId);
     }
 }

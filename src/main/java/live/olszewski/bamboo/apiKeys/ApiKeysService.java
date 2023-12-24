@@ -1,28 +1,20 @@
 package live.olszewski.bamboo.apiKeys;
 
-import live.olszewski.bamboo.auth.userStorage.UserStorage;
-import live.olszewski.bamboo.panda.device.PandaService;
-import live.olszewski.bamboo.services.apiKey.ApiKeyService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.lang.Long.parseLong;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import org.springframework.http.ResponseEntity;
 
 
 public interface ApiKeysService {
 
-    String addNewApiKey(String pandaId);
+    ResponseEntity<ApiResponseDto<?>> addNewApiKey(String pandaId);
 
-    void deactivateApiKey(Long id);
+    ResponseEntity<ApiResponseDto<?>> deactivateApiKey(Long id);
 
-    void activateApiKey(Long id);
+    ResponseEntity<ApiResponseDto<?>> activateApiKey(Long id);
 
-    ApiKeyDto getApiKeyByPanda(String pandaId);
+    ResponseEntity<ApiResponseDto<?>> getApiKeyByPanda(String pandaId);
 
-    List<ApiKeyDto> getApiKeyByOwner();
+    ResponseEntity<ApiResponseDto<?>> getApiKeyByOwner();
 
     ApiKeyDto verifyApiKey(String apiKey);
 

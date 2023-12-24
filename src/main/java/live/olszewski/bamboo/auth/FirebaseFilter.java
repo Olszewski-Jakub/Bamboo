@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.lang.NonNull;
@@ -26,6 +27,8 @@ public class FirebaseFilter extends OncePerRequestFilter {
     private final UserStorage userStorage;
     private final UserService userService;
 
+    private final ApiResponseBuilder apiResponseBuilder;
+
     /**
      * Constructor for the FirebaseFilter class.
      *
@@ -33,10 +36,11 @@ public class FirebaseFilter extends OncePerRequestFilter {
      * @param firebaseAuth An instance of FirebaseAuth for Firebase authentication.
      * @param userService  An instance of UserService to handle user-related operations.
      */
-    public FirebaseFilter(UserStorage userStorage, FirebaseAuth firebaseAuth, UserService userService) {
+    public FirebaseFilter(UserStorage userStorage, FirebaseAuth firebaseAuth, UserService userService, ApiResponseBuilder apiResponseBuilder) {
         this.userStorage = userStorage;
         this.firebaseAuth = firebaseAuth;
         this.userService = userService;
+        this.apiResponseBuilder = apiResponseBuilder;
     }
 
     /**
@@ -62,6 +66,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
                 }
             } catch (FirebaseAuthException e) {
                 SecurityContextHolder.clearContext();
+
             }
         }
         filterChain.doFilter(request, response);

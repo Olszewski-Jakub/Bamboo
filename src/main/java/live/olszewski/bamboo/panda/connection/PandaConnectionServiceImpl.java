@@ -1,9 +1,11 @@
 package live.olszewski.bamboo.panda.connection;
 
+import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.panda.connection.models.PandaStatus;
 import live.olszewski.bamboo.panda.connection.models.PandaStatusDao;
-import live.olszewski.bamboo.panda.connection.models.PandaStatusDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,9 @@ public class PandaConnectionServiceImpl implements PandaConnectionService {
     @Autowired
     private PandaStatusRepository pandaStatusRepository;
 
+    @Autowired
+    private ApiResponseBuilder apiResponseBuilder;
+
     /**
      * Checks the connection status of a Panda device using its UUID.
      *
@@ -26,13 +31,10 @@ public class PandaConnectionServiceImpl implements PandaConnectionService {
      * @throws IllegalStateException if no Panda device with the given UUID exists
      */
     @Override
-    public PandaStatusDto checkConnectionStatusWithUuid(String UUID) {
+    public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithUuid(String UUID) {
 
         Optional<PandaStatusDao> pandaStatusDao = pandaStatusRepository.findByUUID(UUID);
-        if (pandaStatusDao.isEmpty())
-            throw new IllegalStateException("Panda with UUID: " + UUID + " does not exist");
-
-        return pandaStatusDao.get().toDto();
+        return pandaStatusDao.<ResponseEntity<ApiResponseDto<?>>>map(statusDao -> ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Check device connection status successfully", statusDao.toDto()))).orElseGet(() -> ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Panda with UUID: " + UUID + " does not exist")));
     }
 
     /**
@@ -43,12 +45,11 @@ public class PandaConnectionServiceImpl implements PandaConnectionService {
      * @throws IllegalStateException if no Panda device with the given ID exists
      */
     @Override
-    public PandaStatusDto checkConnectionStatusWithId(Long id) {
+    public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithId(Long id) {
         Optional<PandaStatusDao> pandaStatusDao = pandaStatusRepository.findById(id);
         if (pandaStatusDao.isEmpty())
-            throw new IllegalStateException("Panda with id: " + id.toString() + " does not exist");
-
-        return pandaStatusDao.get().toDto();
+            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Panda with id: " + id.toString() + " does not exist"));
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Check device connection status successfully", pandaStatusDao.get().toDto()));
     }
 
     /**
@@ -58,8 +59,9 @@ public class PandaConnectionServiceImpl implements PandaConnectionService {
      * @param status the connection status of the Panda device
      */
     @Override
-    public void sendConnectionStatus(String UUID, PandaStatus status) {
+    public ResponseEntity<ApiResponseDto<?>> sendConnectionStatus(String UUID, PandaStatus status) {
         PandaStatusDao pandaStatus = new PandaStatusDao(UUID, LocalDateTime.now(), status);
         pandaStatusRepository.save(pandaStatus);
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Send device connection status successfully", null));
     }
 }

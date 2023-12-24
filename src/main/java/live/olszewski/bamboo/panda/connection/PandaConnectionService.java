@@ -1,13 +1,14 @@
 package live.olszewski.bamboo.panda.connection;
 
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.panda.connection.models.PandaStatus;
-import live.olszewski.bamboo.panda.connection.models.PandaStatusDto;
+import org.springframework.http.ResponseEntity;
 
 public interface PandaConnectionService {
 
-    void sendConnectionStatus(String UUID, PandaStatus status);
+    ResponseEntity<ApiResponseDto<?>> sendConnectionStatus(String UUID, PandaStatus status);
 
-    PandaStatusDto checkConnectionStatusWithUuid(String UUID);
+    ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithUuid(String UUID);
 
-    PandaStatusDto checkConnectionStatusWithId(Long id);
+    ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithId(Long id);
 }
