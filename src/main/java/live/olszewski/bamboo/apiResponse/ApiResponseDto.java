@@ -1,16 +1,20 @@
-package live.olszewski.bamboo;
+package live.olszewski.bamboo.apiResponse;
 
-public class ApiResponse<T> {
+public class ApiResponseDto<T> {
     private int statusCode;
-    private String status;
+    private ApiStatus status;
     private String message;
     private T data;
 
-    public ApiResponse(int statusCode, String status, String message, T data) {
+    public ApiResponseDto(int statusCode, ApiStatus status, String message, T data) {
         this.statusCode = statusCode;
         this.status = status;
         this.message = message;
         this.data = data;
+    }
+
+    public ApiResponseDto() {
+
     }
 
     public int getStatusCode() {
@@ -21,11 +25,11 @@ public class ApiResponse<T> {
         this.statusCode = statusCode;
     }
 
-    public String getStatus() {
+    public ApiStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ApiStatus status) {
         this.status = status;
     }
 
