@@ -4,9 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.panda.connection.models.PandaStatus;
-import live.olszewski.bamboo.panda.connection.models.PandaStatusDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -44,7 +45,7 @@ public class PandaConnectionController {
                             description = "Device with id {pandaId} does not exists"
                     )
             })
-    public PandaStatusDto checkConnectionStatusWithUuid(@Parameter(description = "UUID of the Panda device") @PathVariable String UUID) {
+    public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithUuid(@Parameter(description = "UUID of the Panda device") @PathVariable String UUID) {
         return pandaConnectionService.checkConnectionStatusWithUuid(UUID);
     }
 
@@ -72,7 +73,7 @@ public class PandaConnectionController {
                             description = "Device with id {pandaId} does not exists"
                     )
             })
-    public PandaStatusDto checkConnectionStatusWithId(@Parameter(description = "ID of the Panda device") @PathVariable String id) {
+    public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithId(@Parameter(description = "ID of the Panda device") @PathVariable String id) {
         return pandaConnectionService.checkConnectionStatusWithId(Long.parseLong(id));
     }
 
@@ -100,8 +101,8 @@ public class PandaConnectionController {
                     )
             }
     )
-    public void sendConnectionStatus(@Parameter(description = "UUID of the Panda device") @PathVariable String UUID, @Parameter(description = "Connection status of the Panda device") @PathVariable String status) {
-        pandaConnectionService.sendConnectionStatus(UUID, PandaStatus.CONNECTED);
+    public ResponseEntity<ApiResponseDto<?>> sendConnectionStatus(@Parameter(description = "UUID of the Panda device") @PathVariable String UUID, @Parameter(description = "Connection status of the Panda device") @PathVariable String status) {
+        return pandaConnectionService.sendConnectionStatus(UUID, PandaStatus.CONNECTED);
     }
 
 }
