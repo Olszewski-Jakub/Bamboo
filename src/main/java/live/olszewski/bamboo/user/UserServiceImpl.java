@@ -131,4 +131,15 @@ public class UserServiceImpl implements UserService {
         return userDao.toUserDto();
     }
 
+    /**
+     * This method checks if a user with a given id exists.
+     *
+     * @param id the id of the user
+     * @return true if the user exists, false otherwise
+     */
+    @Override
+    public Boolean isValidUserById(Long id) {
+        return userRepository.existsById(id);
+    }
+
 }
