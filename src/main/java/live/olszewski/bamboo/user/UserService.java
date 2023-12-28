@@ -23,4 +23,6 @@ public interface UserService {
 
     UserDto getUserById(Long id);
 
+    Boolean isValidUserById(Long id);
+
 }
