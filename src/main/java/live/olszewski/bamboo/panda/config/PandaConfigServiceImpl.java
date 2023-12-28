@@ -10,11 +10,12 @@ import live.olszewski.bamboo.services.jsonExporter.JsonExporterService;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-@Service
+/**
+ * Service class for handling Panda configuration.
+ */
+
 public class PandaConfigServiceImpl implements PandaConfigService {
-
 
     @Autowired
     private PandaRepository pandaRepository;
@@ -28,15 +29,25 @@ public class PandaConfigServiceImpl implements PandaConfigService {
     @Autowired
     private ApiResponseBuilder apiResponseBuilder;
 
-
     @Autowired
     private ApiKeysService apiKeysService;
 
-
+    /**
+     * Method to get the owner of a Panda device by ID.
+     *
+     * @param id the ID of the Panda device
+     * @return the email of the owner
+     */
     private String getOwner(Long id) {
         return userService.getUserEmailById(id);
     }
 
+    /**
+     * Method to get the Panda configuration DTO by Panda ID.
+     *
+     * @param pandaId the ID of the Panda device
+     * @return the Panda configuration DTO
+     */
     private PandaConfigDto getPandaConfigDto(Long pandaId) {
         PandaDto pandaDto = pandaRepository.findDeviceById(pandaId)
                 .orElseThrow(() -> new IllegalStateException("Device with id " + pandaId + " does not exists"))
@@ -46,6 +57,12 @@ public class PandaConfigServiceImpl implements PandaConfigService {
         return pandaConfigDto;
     }
 
+    /**
+     * Method to download the Panda configuration.
+     *
+     * @param pandaId the ID of the Panda device
+     * @return the Panda configuration as a byte array in a ResponseEntity
+     */
     @Override
     public ResponseEntity<byte[]> downloadPandaConfig(Long pandaId) {
         PandaConfigDto pandaConfigDto = getPandaConfigDto(pandaId);
@@ -55,6 +72,12 @@ public class PandaConfigServiceImpl implements PandaConfigService {
                 .body(pandaConfigJsonBytes);
     }
 
+    /**
+     * Method to verify the Panda configuration.
+     *
+     * @param pandaConfigJson the JSON string of the Panda configuration
+     * @return a ResponseEntity containing the ApiResponseDto
+     */
     @Override
     public ResponseEntity<ApiResponseDto<?>> verifyPandaConfig(String pandaConfigJson) {
         Gson gson = new Gson();
@@ -76,7 +99,6 @@ public class PandaConfigServiceImpl implements PandaConfigService {
             return ResponseEntity.status(400).body(apiResponseBuilder.buildErrorResponse(400, "Invalid owner"));
         }
 
-
         try {
             isCorrectPandaOwner(pandaConfigDto.getUuid(), pandaConfigDto.getOwner());
         } catch (Exception e) {
@@ -85,7 +107,12 @@ public class PandaConfigServiceImpl implements PandaConfigService {
         return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully verified panda config", pandaConfigDto));
     }
 
-
+    /**
+     * Method to check if the owner of a Panda device is correct.
+     *
+     * @param pandaUUID the UUID of the Panda device
+     * @param ownerId   the ID of the owner
+     */
     private void isCorrectPandaOwner(String pandaUUID, String ownerId) {
         String owner = getOwner(pandaRepository.findDeviceByUUID(pandaUUID)
                 .orElseThrow(() -> new IllegalStateException("Device with UUID " + pandaUUID + " does not exist"))
