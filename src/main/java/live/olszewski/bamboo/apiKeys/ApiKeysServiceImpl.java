@@ -3,6 +3,8 @@ package live.olszewski.bamboo.apiKeys;
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
+import live.olszewski.bamboo.panda.PandaDao;
+import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.panda.device.PandaService;
 import live.olszewski.bamboo.panda.ownershipCheck.PandaOwnershipCkeck;
 import live.olszewski.bamboo.services.apiKey.ApiKeyService;
@@ -35,6 +37,9 @@ public class ApiKeysServiceImpl implements ApiKeysService {
 
     @Autowired
     private ApiResponseBuilder apiResponseBuilder;
+
+    @Autowired
+    private PandaRepository pandaRepository;
 
     /**
      * This method checks if all values in a list of Booleans are false.
@@ -183,4 +188,12 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         return apiKeyDto;
     }
 
+
+    @Override
+    public PandaDao getPandaByApiKey(String apiKey) {
+        ApiKeyDao apiKeyDao = apiKeysRepository.findByKey(apiKey).orElse(null);
+        if (apiKeyDao == null)
+            return null;
+        return pandaRepository.findById(apiKeyDao.getPanda()).orElse(null);
+    }
 }

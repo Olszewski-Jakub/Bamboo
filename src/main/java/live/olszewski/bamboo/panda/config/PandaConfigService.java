@@ -2,13 +2,12 @@ package live.olszewski.bamboo.panda.config;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 /**
  * This interface represents the service for Panda configuration.
  * It provides methods to download and verify the Panda configuration.
  */
-@Service
+
 public interface PandaConfigService {
 
     /**
