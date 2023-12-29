@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import live.olszewski.bamboo.apiKeys.ApiKeyDto;
 import live.olszewski.bamboo.apiKeys.ApiKeysService;
+import live.olszewski.bamboo.auth.pandaStorage.PandaStorage;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,14 +23,15 @@ import java.util.Objects;
 public class ApiKeyFilter extends OncePerRequestFilter {
 
     private final ApiKeysService apiKeysService;
-
+    private final PandaStorage pandaStorage;
     /**
      * Constructor for the ApiKeyFilter class.
      *
      * @param apiKeysService The service to handle API keys.
      */
-    public ApiKeyFilter(ApiKeysService apiKeysService) {
+    public ApiKeyFilter(ApiKeysService apiKeysService, PandaStorage pandaStorage) {
         this.apiKeysService = apiKeysService;
+        this.pandaStorage = pandaStorage;
     }
 
     /**
@@ -52,6 +54,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                 String apiKeyToken = apiKey.replace("Bearer ", "");
                 ApiKeyDto apiKeyDto = apiKeysService.verifyApiKey(apiKeyToken);
                 if (Objects.equals(apiKeyDto.getKey(), apiKeyToken)) {
+                    pandaStorage.setCurrentPanda(apiKeyToken);
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(apiKeyDto.getPanda(), null, null);
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }

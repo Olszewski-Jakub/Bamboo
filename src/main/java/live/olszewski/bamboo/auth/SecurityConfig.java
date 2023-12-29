@@ -3,6 +3,7 @@ package live.olszewski.bamboo.auth;
 import com.google.firebase.auth.FirebaseAuth;
 import live.olszewski.bamboo.apiKeys.ApiKeysService;
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
+import live.olszewski.bamboo.auth.pandaStorage.PandaStorage;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,21 @@ public class SecurityConfig {
 
     @Autowired
     private UserStorage userStorage;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private ApiKeysService apiKeysService;
+
     @Autowired
     private SecurityPathsConfig securityPathsConfig;
+
     @Autowired
     private ApiResponseBuilder apiResponseBuilder;
+
+    @Autowired
+    private PandaStorage pandaStorage;
 
     /**
      * This method creates a security filter chain for Firebase authentication.
@@ -104,6 +112,6 @@ public class SecurityConfig {
      */
     @Bean
     public ApiKeyFilter apiKeyFilter() {
-        return new ApiKeyFilter(apiKeysService);
+        return new ApiKeyFilter(apiKeysService, pandaStorage);
     }
 }
