@@ -73,4 +73,9 @@ public class ApiConfig {
     public String pandaConnectionStatusPath() {
         return ROOT_PATH + "/panda/connection/status";
     }
+
+    @Bean
+    public String pandaDataCollectionPath() {
+        return ROOT_PATH + "/panda/data/collection";
+    }
 }

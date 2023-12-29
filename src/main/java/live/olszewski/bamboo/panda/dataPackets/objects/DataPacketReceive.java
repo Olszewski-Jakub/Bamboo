@@ -1,4 +1,6 @@
-package live.olszewski.bamboo.panda.dataCollection;
+package live.olszewski.bamboo.panda.dataPackets.objects;
+
+import live.olszewski.bamboo.panda.dataPackets.collection.DataCollectionService;
 
 public class DataPacketReceive {
 

@@ -10,11 +10,12 @@ import live.olszewski.bamboo.services.jsonExporter.JsonExporterService;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class for handling Panda configuration.
  */
-
+@Service
 public class PandaConfigServiceImpl implements PandaConfigService {
 
     @Autowired

@@ -1,10 +1,12 @@
-package live.olszewski.bamboo.panda.dataCollection;
+package live.olszewski.bamboo.panda.dataPackets.collection;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.pandaStorage.PandaStorage;
 import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
+import live.olszewski.bamboo.panda.dataPackets.DataPacketRepository;
+import live.olszewski.bamboo.panda.dataPackets.objects.DataPacketDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,10 @@ public class DataCollectionServiceImpl implements DataCollectionService {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> sendDataPacket(DataPacketReceive dataPacketReceive) {
+    public ResponseEntity<ApiResponseDto<?>> sendDataPacket(int peopleCount) {
         DataPacketDao dataPacketDao;
         try {
-            dataPacketDao = dataPacketReceive.toDao();
+            dataPacketDao = new DataPacketDao(pandaStorage.getPandaId(), peopleCount);
             dataPacketRepository.save(dataPacketDao);
         } catch (Exception e) {
             return ResponseEntity.ok(apiResponseBuilder.buildErrorResponse(500, e.getMessage()));

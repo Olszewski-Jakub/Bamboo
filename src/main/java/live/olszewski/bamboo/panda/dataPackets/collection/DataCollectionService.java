@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.panda.dataCollection;
+package live.olszewski.bamboo.panda.dataPackets.collection;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +9,5 @@ public interface DataCollectionService {
 
     Long getPandaIdFromUUID(String uuid);
 
-    ResponseEntity<ApiResponseDto<?>> sendDataPacket(DataPacketReceive dataPacketReceive);
-
+    ResponseEntity<ApiResponseDto<?>> sendDataPacket(int peopleCount);
 }
