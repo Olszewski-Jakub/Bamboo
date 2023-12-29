@@ -2,8 +2,8 @@ package live.olszewski.bamboo.testUtils;
 
 import live.olszewski.bamboo.apiKeys.ApiKeysRepository;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
-import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.panda.register.RegisterPanda;
 import live.olszewski.bamboo.services.uuid.UUIDService;
 import live.olszewski.bamboo.user.UserDao;

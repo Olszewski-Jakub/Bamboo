@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This controller handles requests related to Panda data collection.
+ */
 @RestController
 @RequestMapping(path = "#{apiConfig.pandaDataCollectionPath}")
 @Tag(name = "Panda Data Collection", description = "Endpoint to acquire panda data collection")
@@ -19,7 +22,12 @@ public class DataCollectionController {
     @Autowired
     private DataCollectionService dataCollectionService;
 
-
+    /**
+     * Sends a data packet with the provided people count.
+     *
+     * @param peopleCount The number of people to include in the data packet.
+     * @return A ResponseEntity containing the result of the operation.
+     */
     @PostMapping
     @Operation(
             description = "Send data packet",
@@ -42,13 +50,11 @@ public class DataCollectionController {
                             name = "dataPacketReceive",
                             description = "Data packet",
                             required = true,
-                            example = "{\"pandaId\":1,\"data\":\"10\"}"
+                            example = "100"
                     )
             }
     )
     public ResponseEntity<ApiResponseDto<?>> sendDataPacket(@Parameter int peopleCount) {
         return dataCollectionService.sendDataPacket(peopleCount);
     }
-
-
 }

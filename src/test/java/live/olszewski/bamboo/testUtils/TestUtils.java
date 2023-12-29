@@ -1,6 +1,6 @@
 package live.olszewski.bamboo.testUtils;
 
-import live.olszewski.bamboo.panda.PandaDao;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.panda.register.RegisterPanda;
 import live.olszewski.bamboo.user.UserDao;
 import live.olszewski.bamboo.user.UserDto;

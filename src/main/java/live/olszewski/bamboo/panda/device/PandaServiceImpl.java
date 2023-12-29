@@ -3,14 +3,12 @@ package live.olszewski.bamboo.panda.device;
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
-import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PandaServiceImpl implements PandaService {
@@ -38,17 +36,16 @@ public class PandaServiceImpl implements PandaService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getPandaDevicesByOwner() {
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully retrieved all panda devices owned by user", pandaRepository.findDeviceByOwner(userService.getPandaOwner()).stream().map(PandaDao::toDto).toList()));
+        var ownedPandas = pandaRepository.findDeviceByOwner(userService.getPandaOwner()).stream().map(PandaDao::toDto).toList();
+        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully retrieved all panda devices owned by user", ownedPandas));
     }
-
     @Override
     public Boolean updatePandaApiKey(Long pandaId, String apiKey) {
-        Optional<PandaDao> pandaDao = pandaRepository.findById(pandaId);
-        if (pandaDao.isEmpty())
-            return false;
-        pandaDao.get().setApi_key(apiKey);
-        pandaRepository.save(pandaDao.get());
-        return true;
+        return pandaRepository.findById(pandaId).map(panda -> {
+            panda.setApi_key(apiKey);
+            pandaRepository.save(panda);
+            return true;
+        }).orElse(false);
     }
 
 }

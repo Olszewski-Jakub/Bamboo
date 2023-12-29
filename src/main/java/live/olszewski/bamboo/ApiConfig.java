@@ -74,6 +74,11 @@ public class ApiConfig {
         return ROOT_PATH + "/panda/connection/status";
     }
 
+    /**
+     * This method returns the API path for the panda data collection endpoint.
+     *
+     * @return the API path for the panda data collection endpoint
+     */
     @Bean
     public String pandaDataCollectionPath() {
         return ROOT_PATH + "/panda/data/send";

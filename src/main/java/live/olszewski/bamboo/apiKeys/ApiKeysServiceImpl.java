@@ -3,9 +3,9 @@ package live.olszewski.bamboo.apiKeys;
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
-import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.panda.device.PandaService;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.panda.ownershipCheck.PandaOwnershipCkeck;
 import live.olszewski.bamboo.services.apiKey.ApiKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,7 +188,12 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         return apiKeyDto;
     }
 
-
+    /**
+     * This method retrieves a PandaDao object by its associated API key.
+     *
+     * @param apiKey The API key associated with the PandaDao object.
+     * @return The PandaDao object if it exists, null otherwise.
+     */
     @Override
     public PandaDao getPandaByApiKey(String apiKey) {
         ApiKeyDao apiKeyDao = apiKeysRepository.findByKey(apiKey).orElse(null);

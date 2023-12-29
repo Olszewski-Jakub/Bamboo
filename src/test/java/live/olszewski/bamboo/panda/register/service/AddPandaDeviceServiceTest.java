@@ -1,7 +1,7 @@
 package live.olszewski.bamboo.panda.register.service;
 
-import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.panda.register.RegisterPandaService;
 import live.olszewski.bamboo.testUtils.TestUtils;
 import org.junit.jupiter.api.AfterAll;

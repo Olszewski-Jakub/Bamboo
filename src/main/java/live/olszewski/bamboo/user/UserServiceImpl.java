@@ -72,71 +72,42 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "User with id" + id + "removed successfully", null));
     }
 
-    /**
-     * This method returns the owner of a panda.
-     *
-     * @return the owner of a panda
-     */
+
     @Override
     public Long getPandaOwner() {
         UserDao userDao = userRepository.findUserByEmail(userStorage.getCurrentUserEmail()).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
         return userDao.getId();
     }
 
-    /**
-     * This method checks if a user is an administrator.
-     *
-     * @param email the email of the user
-     * @return true if the user is an administrator, false otherwise
-     */
+
     @Override
     public Boolean isAdministrator(String email) {
         UserDao userDao = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
         return userDao.getAdministrator();
     }
 
-    /**
-     * This method returns the id of a user.
-     *
-     * @param email the email of the user
-     * @return the id of the user
-     */
+
     @Override
     public Long getUserId(String email) {
         UserDao userDao = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
         return userDao.getId();
     }
 
-    /**
-     * This method returns the email of a user.
-     *
-     * @param id the id of the user
-     * @return the email of the user
-     */
+
     @Override
     public String getUserEmailById(Long id) {
         UserDao userDao = userRepository.findUserById(id).orElseThrow(() -> new IllegalStateException("User with id " + id + " does not exists"));
         return userDao.getEmail();
     }
 
-    /**
-     * This method returns the details of a user.
-     *
-     * @param id the id of the user
-     * @return the details of the user
-     */
+
     @Override
     public UserDto getUserById(Long id) {
         UserDao userDao = userRepository.findUserById(id).orElseThrow(() -> new IllegalStateException("User with id " + id + " does not exists"));
         return userDao.toUserDto();
     }
 
-    /**
-     * This method checks if a user with a given id exists.
-     *
-     * @param id the id of the user
-     * @return true if the user exists, false otherwise
-     */
+
     @Override
     public Boolean isValidUserById(Long id) {
         return userRepository.existsById(id);

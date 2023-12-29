@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * This controller handles requests related to the registration of new Panda devices.
+ */
 @RestController
 @RequestMapping(path = "#{apiConfig.registerPandaPath}")
 @Tag(name = "Register Panda", description = "Endpoints related to register new panda device")
@@ -17,6 +20,12 @@ public class RegisterPandaController {
     @Autowired
     private RegisterPandaService registerPandaService;
 
+    /**
+     * Registers a new Panda device.
+     *
+     * @param registerPanda The RegisterPanda object containing the details of the new Panda device.
+     * @return A ResponseEntity containing the result of the operation.
+     */
     @PostMapping
     @Operation(
             description = "Register new panda device",
@@ -46,6 +55,12 @@ public class RegisterPandaController {
         return registerPandaService.addPandaDevice(registerPanda);
     }
 
+    /**
+     * Deletes a Panda device.
+     *
+     * @param id The ID of the Panda device to delete.
+     * @return A ResponseEntity containing the result of the operation.
+     */
     @DeleteMapping(path = "{pandaId}")
     @Operation(
             description = "Delete panda device",

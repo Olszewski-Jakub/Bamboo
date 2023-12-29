@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import live.olszewski.bamboo.apiKeys.ApiKeysService;
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
-import live.olszewski.bamboo.panda.PandaDto;
 import live.olszewski.bamboo.panda.PandaRepository;
+import live.olszewski.bamboo.panda.objects.PandaDto;
 import live.olszewski.bamboo.services.jsonExporter.JsonExporterService;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +58,6 @@ public class PandaConfigServiceImpl implements PandaConfigService {
         return pandaConfigDto;
     }
 
-    /**
-     * Method to download the Panda configuration.
-     *
-     * @param pandaId the ID of the Panda device
-     * @return the Panda configuration as a byte array in a ResponseEntity
-     */
     @Override
     public ResponseEntity<byte[]> downloadPandaConfig(Long pandaId) {
         PandaConfigDto pandaConfigDto = getPandaConfigDto(pandaId);
@@ -73,12 +67,7 @@ public class PandaConfigServiceImpl implements PandaConfigService {
                 .body(pandaConfigJsonBytes);
     }
 
-    /**
-     * Method to verify the Panda configuration.
-     *
-     * @param pandaConfigJson the JSON string of the Panda configuration
-     * @return a ResponseEntity containing the ApiResponseDto
-     */
+
     @Override
     public ResponseEntity<ApiResponseDto<?>> verifyPandaConfig(String pandaConfigJson) {
         Gson gson = new Gson();

@@ -1,7 +1,7 @@
 package live.olszewski.bamboo.apiKeys;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
-import live.olszewski.bamboo.panda.PandaDao;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import org.springframework.http.ResponseEntity;
 
 
