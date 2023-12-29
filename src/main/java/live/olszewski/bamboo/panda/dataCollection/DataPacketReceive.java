@@ -1,14 +1,14 @@
 package live.olszewski.bamboo.panda.dataCollection;
 
-public class DataPacketDto {
+public class DataPacketReceive {
 
     private String pandaUuid;
     private int peopleCount;
 
-    public DataPacketDto() {
+    public DataPacketReceive() {
     }
 
-    public DataPacketDto(String pandaUuid, int peopleCount) {
+    public DataPacketReceive(String pandaUuid, int peopleCount) {
         this.pandaUuid = pandaUuid;
         this.peopleCount = peopleCount;
     }
