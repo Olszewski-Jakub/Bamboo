@@ -188,7 +188,12 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         return apiKeyDto;
     }
 
-
+    /**
+     * This method retrieves a PandaDao object by its associated API key.
+     *
+     * @param apiKey The API key associated with the PandaDao object.
+     * @return The PandaDao object if it exists, null otherwise.
+     */
     @Override
     public PandaDao getPandaByApiKey(String apiKey) {
         ApiKeyDao apiKeyDao = apiKeysRepository.findByKey(apiKey).orElse(null);
