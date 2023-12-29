@@ -6,11 +6,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class JsonExporterServiceImpl implements JsonExporterService {
 
+    private final Gson gson = new Gson();
+
     @Override
     public String export(Object object) {
-        Gson gson = new Gson();
-        String objectInJson = gson.toJson(object);
-        return objectInJson;
+        return gson.toJson(object);
     }
-
 }
