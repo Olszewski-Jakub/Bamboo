@@ -1,7 +1,7 @@
 package live.olszewski.bamboo.auth.pandaStorage;
 
 import live.olszewski.bamboo.apiKeys.ApiKeysService;
-import live.olszewski.bamboo.panda.PandaDao;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.panda;
+package live.olszewski.bamboo.panda.objects;
 
 import live.olszewski.bamboo.panda.config.PandaConfigDto;
 

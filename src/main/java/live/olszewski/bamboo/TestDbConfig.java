@@ -1,7 +1,7 @@
 package live.olszewski.bamboo;
 
-import live.olszewski.bamboo.panda.PandaDao;
 import live.olszewski.bamboo.panda.PandaRepository;
+import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.services.uuid.UUIDService;
 import live.olszewski.bamboo.user.UserDao;
 import live.olszewski.bamboo.user.UserRepository;
