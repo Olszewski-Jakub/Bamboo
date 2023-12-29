@@ -76,6 +76,6 @@ public class ApiConfig {
 
     @Bean
     public String pandaDataCollectionPath() {
-        return ROOT_PATH + "/panda/data/collection";
+        return ROOT_PATH + "/panda/data/send";
     }
 }
