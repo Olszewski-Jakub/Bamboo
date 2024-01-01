@@ -10,20 +10,18 @@ public class SuccessBuilder {
 
     /**
      * Builds a 200 OK response.
-     *
      * @param message The message to include in the response.
-     * @param data    The data to include in the response.
+     * @param data The data to include in the response.
      * @return A ResponseEntity with the status, message, and data.
      */
-    public <T> ResponseEntity<ApiResponseDto<T>> code200(String message, T data) {
+    public <T> ResponseEntity<ApiResponseDto<?>> code200(String message, T data) {
         return ResponseEntity.ok(new ApiResponseDto<>(200, ApiStatus.SUCCESS, message, data));
     }
 
     /**
      * Builds a 201 Created response.
-     *
      * @param message The message to include in the response.
-     * @param data    The data to include in the response.
+     * @param data The data to include in the response.
      * @return A ResponseEntity with the status, message, and data.
      */
     public <T> ResponseEntity<ApiResponseDto<T>> code201(String message, T data) {
@@ -32,9 +30,8 @@ public class SuccessBuilder {
 
     /**
      * Builds a 202 Accepted response.
-     *
      * @param message The message to include in the response.
-     * @param data    The data to include in the response.
+     * @param data The data to include in the response.
      * @return A ResponseEntity with the status, message, and data.
      */
     public <T> ResponseEntity<ApiResponseDto<T>> code202(String message, T data) {
@@ -43,9 +40,8 @@ public class SuccessBuilder {
 
     /**
      * Builds a 204 No Content response.
-     *
      * @param message The message to include in the response.
-     * @param data    The data to include in the response.
+     * @param data The data to include in the response.
      * @return A ResponseEntity with the status, message, and data.
      */
     public <T> ResponseEntity<ApiResponseDto<T>> code204(String message, T data) {

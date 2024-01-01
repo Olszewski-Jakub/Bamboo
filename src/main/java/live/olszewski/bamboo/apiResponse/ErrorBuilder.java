@@ -122,6 +122,17 @@ public class ErrorBuilder {
     }
 
     /**
+     * Builds a 409 Conflict response.
+     *
+     * @param message The message to include in the response.
+     * @return A ResponseEntity with the status and message.
+     */
+
+    public ResponseEntity<ApiResponseDto<?>> code409(String message) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(HttpStatus.CONFLICT.value(), ApiStatus.ERROR, message, null));
+    }
+
+    /**
      * Builds a 412 Precondition Failed response.
      *
      * @param message The message to include in the response.
