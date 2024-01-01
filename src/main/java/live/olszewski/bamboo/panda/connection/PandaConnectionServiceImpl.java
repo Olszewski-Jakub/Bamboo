@@ -2,6 +2,7 @@ package live.olszewski.bamboo.panda.connection;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import live.olszewski.bamboo.apiResponse.MessageService;
 import live.olszewski.bamboo.panda.connection.models.PandaStatus;
 import live.olszewski.bamboo.panda.connection.models.PandaStatusDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,30 +22,28 @@ public class PandaConnectionServiceImpl implements PandaConnectionService {
     private PandaStatusRepository pandaStatusRepository;
 
     @Autowired
-    private ApiResponseBuilder apiResponseBuilder;
+    private ApiResponseBuilder builder;
+
+    @Autowired
+    private MessageService messageService;
 
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithUuid(String UUID) {
-
         Optional<PandaStatusDao> pandaStatusDao = pandaStatusRepository.findByUUID(UUID);
-        return pandaStatusDao.<ResponseEntity<ApiResponseDto<?>>>map(statusDao ->
-                        ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Check device connection status successfully", statusDao.toDto())))
-                .orElseGet(() -> ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Panda with UUID: " + UUID + " does not exist")));
+        return pandaStatusDao.map(statusDao -> builder.success().code200(messageService.getMessage("panda.status.retrieve.uuid", UUID), statusDao.toDto())).orElseGet(() -> builder.error().code404(messageService.getMessage("panda.status.not.found.uuid", UUID)));
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithId(Long id) {
         Optional<PandaStatusDao> pandaStatusDao = pandaStatusRepository.findById(id);
-        return pandaStatusDao.<ResponseEntity<ApiResponseDto<?>>>map(statusDao ->
-                        ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Check device connection status successfully", statusDao.toDto())))
-                .orElseGet(() -> ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Panda with id: " + id + " does not exist")));
+        return pandaStatusDao.map(statusDao -> builder.success().code200(messageService.getMessage("panda.status.retrieve.id", id), statusDao.toDto())).orElseGet(() -> builder.error().code404(messageService.getMessage("panda.status.not.found.id", id)));
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> sendConnectionStatus(String UUID, PandaStatus status) {
         PandaStatusDao pandaStatus = new PandaStatusDao(UUID, LocalDateTime.now(), status);
         pandaStatusRepository.save(pandaStatus);
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Send device connection status successfully", null));
+        return builder.success().code200(messageService.getMessage("panda.status.send", UUID), null);
     }
 }

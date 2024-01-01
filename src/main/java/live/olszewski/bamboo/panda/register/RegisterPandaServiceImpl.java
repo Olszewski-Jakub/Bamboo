@@ -2,6 +2,7 @@ package live.olszewski.bamboo.panda.register;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import live.olszewski.bamboo.apiResponse.MessageService;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.services.uuid.UUIDService;
@@ -25,7 +26,10 @@ public class RegisterPandaServiceImpl implements RegisterPandaService {
     private UserService userService;
 
     @Autowired
-    private ApiResponseBuilder apiResponseBuilder;
+    private ApiResponseBuilder builder;
+
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> addPandaDevice(RegisterPanda registerPanda) {
@@ -34,26 +38,24 @@ public class RegisterPandaServiceImpl implements RegisterPandaService {
         registerPandaDao.setName(registerPanda.getName());
         registerPandaDao.setStatus(true);
         registerPandaDao.setOwner(userService.getPandaOwner());
-        registerPandaDao.setUuid(uuidService.generateUUIDFromString(
-                registerPandaDao.valuesForUuidGeneration()
-        ).toString());
+        registerPandaDao.setUuid(uuidService.generateUUIDFromString(registerPandaDao.valuesForUuidGeneration()).toString());
         Optional<PandaDao> registerPandaDaoOptional = pandaRepository.findDeviceByUUID(registerPandaDao.getUuid());
         if (registerPandaDaoOptional.isPresent()) {
-            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Device with this parameters already exists"));
+            return builder.error().code409(messageService.getMessage("panda.exists.", registerPandaDao.getId()));
         }
 
         pandaRepository.save(registerPandaDao);
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Device registered successfully", null));
+        return builder.success().code200(messageService.getMessage("panda.created", registerPandaDao.getId()), null);
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> deletePandaDevice(Long id) {
         boolean exists = pandaRepository.existsById(id);
         if (!exists) {
-            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Device with id " + id + " deos not exists"));
+            return builder.error().code404(messageService.getMessage("panda.not.found", id));
         }
         pandaRepository.deleteById(id);
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Device deleted successfully", null));
+        return builder.success().code200(messageService.getMessage("panda.deleted", id), null);
     }
 
 }

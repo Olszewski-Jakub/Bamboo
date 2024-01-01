@@ -2,6 +2,7 @@ package live.olszewski.bamboo.panda.dataPackets.collection;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import live.olszewski.bamboo.apiResponse.MessageService;
 import live.olszewski.bamboo.auth.pandaStorage.PandaStorage;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.panda.dataPackets.DataPacketRepository;
@@ -24,7 +25,10 @@ public class DataCollectionServiceImpl implements DataCollectionService {
     private PandaStorage pandaStorage;
 
     @Autowired
-    private ApiResponseBuilder apiResponseBuilder;
+    private ApiResponseBuilder builder;
+
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public Long getPandaIdFromUUID(String uuid) {
@@ -38,10 +42,9 @@ public class DataCollectionServiceImpl implements DataCollectionService {
             dataPacketDao = new DataPacketDao(pandaStorage.getPandaId(), peopleCount);
             dataPacketRepository.save(dataPacketDao);
         } catch (Exception e) {
-            return ResponseEntity.ok(apiResponseBuilder.buildErrorResponse(500, e.getMessage()));
+            return builder.error().code500(messageService.getMessage("internal.server.error", e.getMessage()));
         }
-
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Data packet saved successfully", dataPacketDao));
+        return builder.success().code200(messageService.getMessage("data.packet.saved"), dataPacketDao);
     }
 
 }
