@@ -1,15 +1,26 @@
 package live.olszewski.bamboo.apiResponse;
 
+import java.text.SimpleDateFormat;
+
 /**
  * This class represents a data transfer object (DTO) for API responses.
  *
  * @param <T> The type of the data included in the response.
  */
 public class ApiResponseDto<T> {
+    private String timestamp = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new java.util.Date());
+    ;
     private int statusCode;
     private ApiStatus status;
     private String message;
     private T data;
+
+    /**
+     * Constructs a new ApiResponseDto with no initial values.
+     */
+    public ApiResponseDto() {
+
+    }
 
     /**
      * Constructs a new ApiResponseDto with the provided status code, status, message, and data.
@@ -27,11 +38,22 @@ public class ApiResponseDto<T> {
     }
 
     /**
-     * Constructs a new ApiResponseDto with no initial values.
+     * Constructs a new ApiResponseDto with the provided status code, status, message, and data.
+     *
+     * @param timestamp  The timestamp of the response.
+     * @param statusCode The status code of the response.
+     * @param status     The status of the response.
+     * @param message    The message of the response.
+     * @param data       The data included in the response.
      */
-    public ApiResponseDto() {
-
+    public ApiResponseDto(String timestamp, int statusCode, ApiStatus status, String message, T data) {
+        this.timestamp = timestamp;
+        this.statusCode = statusCode;
+        this.status = status;
+        this.message = message;
+        this.data = data;
     }
+
 
     /**
      * Retrieves the status code of the response.
@@ -103,5 +125,23 @@ public class ApiResponseDto<T> {
      */
     public void setData(T data) {
         this.data = data;
+    }
+
+    /**
+     * Retrieves the timestamp of the response.
+     *
+     * @return The timestamp of the response.
+     */
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * Sets the timestamp of the response.
+     *
+     * @param timestamp The timestamp to set.
+     */
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }

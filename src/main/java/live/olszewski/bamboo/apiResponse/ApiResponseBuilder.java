@@ -4,6 +4,7 @@ package live.olszewski.bamboo.apiResponse;
  * This interface defines methods for building API responses.
  */
 public interface ApiResponseBuilder {
+    // Old format for buildSuccessResponse. remains for compatibility with existing code.
 
     /**
      * Builds a successful API response with the provided status code, message, and data.
@@ -32,4 +33,10 @@ public interface ApiResponseBuilder {
      * @return An ApiResponseDto object representing the unauthorized API response.
      */
     ApiResponseDto<Void> buildUnauthorizedResponse(String message);
+
+    //New format for buildSuccessResponse.
+
+    ErrorBuilder error();
+
+    SuccessBuilder success();
 }

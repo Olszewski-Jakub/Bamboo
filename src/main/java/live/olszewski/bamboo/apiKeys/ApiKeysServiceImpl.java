@@ -2,6 +2,7 @@ package live.olszewski.bamboo.apiKeys;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import live.olszewski.bamboo.apiResponse.MessageService;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.panda.device.PandaService;
@@ -36,7 +37,10 @@ public class ApiKeysServiceImpl implements ApiKeysService {
     private UserStorage userStorage;
 
     @Autowired
-    private ApiResponseBuilder apiResponseBuilder;
+    private ApiResponseBuilder builder;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private PandaRepository pandaRepository;
@@ -67,12 +71,12 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         Long pandaIdLong = parseLong(pandaId);
         boolean isPandaOwner = pandaOwnershipCkeck.isPandaOwner(pandaIdLong);
         if (!isPandaOwner) {
-            return ResponseEntity.status(403).body(apiResponseBuilder.buildErrorResponse(403, "User is not owner of device"));
+            return builder.error().code403(messageService.getMessage("user.not.owner"));
         }
         List<ApiKeyDao> apiKeyDaos = apiKeysRepository.findByPanda(pandaIdLong);
         List<Boolean> activeApiKeys = apiKeyDaos.stream().map(ApiKeyDao::getActive).toList();
         if (!areAllFalse(activeApiKeys)) {
-            return ResponseEntity.status(403).body(apiResponseBuilder.buildErrorResponse(403, "Panda with id " + pandaId + " has active api key. To create new one ensure old api keys are deactivated"));
+            return builder.error().code403(messageService.getMessage("api.key.has.active.api.key", pandaId));
         }
         ApiKeyDao apiKeyDao = new ApiKeyDao();
         apiKeyDao.setPanda(pandaIdLong);
@@ -82,8 +86,8 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         apiKeysRepository.save(apiKeyDao);
         Boolean updated = pandaService.updatePandaApiKey(pandaIdLong, apiKey);
         if (!updated)
-            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Panda with id " + pandaId + " has no api key" + pandaId));
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully generated api key", apiKey));
+            return builder.error().code500(messageService.getMessage("api.key.does.not.exist"));
+        return builder.success().code200(messageService.getMessage("api.key.created", pandaId), apiKey);
     }
 
     /**
@@ -122,7 +126,7 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         ApiKeyDao apiKeyDao = getApiKeyDaoById(id);
         apiKeyDao.setActive(false);
         apiKeysRepository.save(apiKeyDao);
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully deactivated api key", apiKeyDao.toDto()));
+        return builder.success().code200(messageService.getMessage("api.key.deactivated", id), null);
     }
 
     /**
@@ -135,7 +139,7 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         ApiKeyDao apiKeyDao = getApiKeyDaoById(id);
         apiKeyDao.setActive(true);
         apiKeysRepository.save(apiKeyDao);
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully activated api key", apiKeyDao.toDto()));
+        return builder.success().code200(messageService.getMessage("api.key.activated", id), null);
     }
 
     /**
@@ -148,9 +152,9 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         Long ownerId = userStorage.getCurrentUserId();
         List<ApiKeyDao> apiKeyDaos = apiKeysRepository.findByOwner(ownerId);
         if (apiKeyDaos.isEmpty()) {
-            return ResponseEntity.status(403).body(apiResponseBuilder.buildErrorResponse(403, "User with id " + ownerId + " has no api keys"));
+            return builder.error().code403(messageService.getMessage("user.has.no.api.keys", ownerId));
         }
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully retrieved api keys", apiKeyDaos.stream().map(ApiKeyDao::toDto).toList()));
+        return builder.success().code200(messageService.getMessage("api.key.retrieve.by.owner", ownerId), apiKeyDaos.stream().map(ApiKeyDao::toDto).toList());
     }
 
     /**
@@ -164,9 +168,9 @@ public class ApiKeysServiceImpl implements ApiKeysService {
         Long pandaIdLong = parseLong(pandaId);
         Optional<ApiKeyDao> apiKeyDaoOptional = apiKeysRepository.findByPandaAndActive(pandaIdLong);
         if (apiKeyDaoOptional.isEmpty()) {
-            return ResponseEntity.status(403).body(apiResponseBuilder.buildErrorResponse(403, "Panda with id " + pandaId + " has no active api key"));
+            return builder.error().code403(messageService.getMessage("panda.has.no.active.api.key", pandaId));
         }
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Successfully retrieved api key", apiKeyDaoOptional.get().toDto()));
+        return builder.success().code200(messageService.getMessage("api.key.retrieve.by.panda", pandaId), apiKeyDaoOptional.get().toDto());
     }
 
     /**

@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
+import live.olszewski.bamboo.apiResponse.MessageService;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +19,21 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private UserStorage userStorage;
-    @Autowired
-    private ApiResponseBuilder apiResponseBuilder;
 
+    @Autowired
+    private ApiResponseBuilder builder;
+
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getUsers() {
         if (!userStorage.isAdministrator())
-            return ResponseEntity.status(403).body(apiResponseBuilder.buildErrorResponse(403, "Unauthorized"));
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Success", userRepository.findAll().stream().map(UserDao::toUserDto).toList()));
+            return builder.error().code401(messageService.getMessage("user.not.administrator"));
+        return builder.success().code200("asd", userRepository.findAll().stream().map(UserDao::toUserDto).toList());
     }
 
 
@@ -36,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<ApiResponseDto<?>> addNewUser(RegisterUser registerUser) {
         Optional<UserDao> userOptional = userRepository.findUserByEmail(registerUser.getEmail());
         if (userOptional.isPresent()) {
-            return ResponseEntity.status(409).body(apiResponseBuilder.buildErrorResponse(409, "User already exists"));
+            return builder.error().code409(messageService.getMessage("user.email.exists", registerUser.getEmail()));
         }
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                 .setEmail(registerUser.getEmail())
@@ -50,15 +55,18 @@ public class UserServiceImpl implements UserService {
             userRepository.save(userDao);
             System.out.println(userDao);
         } catch (FirebaseAuthException e) {
-            return ResponseEntity.status(500).body(apiResponseBuilder.buildErrorResponse(500, "Internal server error" + e.getMessage()));
+            builder.error().code500(messageService.getMessage("internal.server.error", e.getMessage()));
         }
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "User added successfully", null));
+        return builder.success().code200(messageService.getMessage("user.created", registerUser.getEmail()), null);
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> currentUserDetails() {
         Optional<UserDao> userOptional = userRepository.findUserByEmail(userStorage.getCurrentUserEmail());
-        return userOptional.<ResponseEntity<ApiResponseDto<?>>>map(userDao -> ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "Current details of user with id:" + userStorage.getCurrentUserId().toString(), userDao.toUserDto()))).orElseGet(() -> ResponseEntity.status(404).body(apiResponseBuilder.buildErrorResponse(404, "User not found")));
+        if (!userOptional.isPresent()) {
+            return builder.error().code404(messageService.getMessage("user.not.found", userStorage.getCurrentUserEmail()));
+        }
+        return builder.success().code200(messageService.getMessage("user.details", userStorage.getCurrentUserEmail()), userOptional.get().toUserDto());
     }
 
 
@@ -66,10 +74,10 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<ApiResponseDto<?>> deleteUser(Long id) {
         boolean exists = userRepository.existsById(id);
         if (!exists) {
-            return ResponseEntity.status(404).body(apiResponseBuilder.buildErrorResponse(404, "User with id " + id + " does not exists"));
+            return builder.error().code404(messageService.getMessage("user.not.found.id", id));
         }
         userRepository.deleteById(id);
-        return ResponseEntity.ok(apiResponseBuilder.buildSuccessResponse(200, "User with id" + id + "removed successfully", null));
+        return builder.success().code200(messageService.getMessage("user.removed", id), null);
     }
 
 

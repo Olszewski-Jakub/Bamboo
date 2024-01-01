@@ -20,6 +20,16 @@ public class ApiResponseBuilderImpl implements ApiResponseBuilder {
     public ApiResponseDto<Void> buildUnauthorizedResponse(String message) {
         return new ApiResponseDto<>(HttpStatus.UNAUTHORIZED.value(), ApiStatus.ERROR, message, null);
     }
+
+    @Override
+    public ErrorBuilder error() {
+        return new ErrorBuilder();
+    }
+
+    @Override
+    public SuccessBuilder success() {
+        return new SuccessBuilder();
+    }
 }
 
 
