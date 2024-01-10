@@ -1,5 +1,6 @@
 package live.olszewski.bamboo.user.service;
 
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.testUtils.TestUtils;
 import live.olszewski.bamboo.user.UserService;
 import org.junit.jupiter.api.AfterAll;
@@ -9,12 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -68,8 +71,10 @@ public class DeleteUserTest {
     }
     @Test
     public void deleteUser_ThrowsExceptionWhenUserDoesNotExist() {
-        Long nonExistentId = 100L;
-        assertThrows(IllegalStateException.class, () -> userService.deleteUser(nonExistentId));
+
+        ResponseEntity<ApiResponseDto<?>> response = userService.deleteUser(100L);
+        assertEquals(404, response.getBody().getStatusCode());
+        assertEquals("User with id 100 does not exist", response.getBody().getMessage());
     }
 
     @Test
