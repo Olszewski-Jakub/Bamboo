@@ -16,11 +16,12 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -66,43 +67,25 @@ public class GetUsersControllerTest {
     }
 
     @Test
-    public void testGetUser() throws Exception {
-        testUtils.addUsersToDatabase(1);
-        UserDao userDao = testUtils.generateUserDaoWithId(1L);
-        userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
-        String expectedJson = "[{"
-                + "\"id\":" + userDao.getId() + ","
-                + "\"name\":\"" + userDao.getName() + "\","
-                + "\"surname\":\"" + userDao.getSurname() + "\","
-                + "\"email\":\"" + userDao.getEmail() + "\","
-                + "\"uid\":\"" + userDao.getUID()+ "\","
-                + "\"administrator\":" + userDao.getAdministrator()
-                + "}]";
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user"))
-                .andExpect(status().isOk()).andExpect(content().json(expectedJson));
-    }
-
-    @Test
     public void getUser_whenUserExists_returnsCorrectUser() throws Exception {
         testUtils.addUsersToDatabase(1);
         UserDao userDao = testUtils.generateUserDaoWithId(1L);
         userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
-        String expectedJson = "[{"
-                + "\"id\":" + userDao.getId() + ","
-                + "\"name\":\"" + userDao.getName() + "\","
-                + "\"surname\":\"" + userDao.getSurname() + "\","
-                + "\"email\":\"" + userDao.getEmail() + "\","
-                + "\"uid\":\"" + userDao.getUID()+ "\","
-                + "\"administrator\":" + userDao.getAdministrator()
-                + "}]";
+
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user"))
-                .andExpect(status().isOk()).andExpect(content().json(expectedJson));
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").value(userDao.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].name").value(userDao.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].surname").value(userDao.getSurname()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].email").value(userDao.getEmail()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].uid").value(userDao.getUID()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].administrator").value(userDao.getAdministrator()));
     }
 
     @Test
     public void getUser_whenUserDoesNotExist_returnsNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user"))
-                .andExpect(status().isOk()).andExpect(content().json("[]"));
+                .andExpect(status().isOk()).andExpect((MockMvcResultMatchers.jsonPath("$.data").isEmpty()));
     }
 
     @Test
@@ -111,22 +94,21 @@ public class GetUsersControllerTest {
         UserDao userDao1 = testUtils.generateUserDaoWithId(1L);
         UserDao userDao2 = testUtils.generateUserDaoWithId(2L);
         userStorage.setCurrentUser(userDao1.getName(), userDao1.getEmail(), userDao1.getUID(), userDao1.getAdministrator(), userDao1.getId());
-        String expectedJson = "[{"
-                + "\"id\":" + userDao1.getId() + ","
-                + "\"name\":\"" + userDao1.getName() + "\","
-                + "\"surname\":\"" + userDao1.getSurname() + "\","
-                + "\"email\":\"" + userDao1.getEmail() + "\","
-                + "\"uid\":\"" + userDao1.getUID()+ "\","
-                + "\"administrator\":" + userDao1.getAdministrator()
-                + "}," + "{"
-                + "\"id\":" + userDao2.getId() + ","
-                + "\"name\":\"" + userDao2.getName() + "\","
-                + "\"surname\":\"" + userDao2.getSurname() + "\","
-                + "\"email\":\"" + userDao2.getEmail() + "\","
-                + "\"uid\":\"" + userDao2.getUID()+ "\","
-                + "\"administrator\":" + userDao2.getAdministrator()
-                +"}]";
+
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user"))
-                .andExpect(status().isOk()).andExpect(content().json(expectedJson));
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").value(userDao1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].name").value(userDao1.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].surname").value(userDao1.getSurname()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].email").value(userDao1.getEmail()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].uid").value(userDao1.getUID()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].administrator").value(userDao1.getAdministrator()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].id").value(userDao2.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].name").value(userDao2.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].surname").value(userDao2.getSurname()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].email").value(userDao2.getEmail()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].uid").value(userDao2.getUID()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].administrator").value(userDao2.getAdministrator()));
     }
 }

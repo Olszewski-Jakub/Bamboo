@@ -1,9 +1,11 @@
 package live.olszewski.bamboo.testUtils;
 
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.panda.objects.PandaDao;
 import live.olszewski.bamboo.panda.register.RegisterPanda;
 import live.olszewski.bamboo.user.UserDao;
 import live.olszewski.bamboo.user.UserDto;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.function.Function;
@@ -35,4 +37,6 @@ public interface TestUtils {
         // Set properties of userDao based on object
         return userDto;
     };
+
+    ApiResponseDto<?> deserialize(ResponseEntity<ApiResponseDto<?>> responseEntity);
 }

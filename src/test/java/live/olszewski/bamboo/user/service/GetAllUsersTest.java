@@ -1,5 +1,7 @@
 package live.olszewski.bamboo.user.service;
 
+
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.testUtils.TestUtils;
 import live.olszewski.bamboo.user.UserDto;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -18,13 +21,16 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@SuppressWarnings("unchecked")
 public class GetAllUsersTest {
 
     @Autowired
@@ -38,11 +44,7 @@ public class GetAllUsersTest {
 
 
     @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
-            .withDatabaseName("integration-tests-db")
-            .withUsername("postgres")
-            .withPassword("admin")
-            .withInitScript("init.sql");
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16").withDatabaseName("integration-tests-db").withUsername("postgres").withPassword("admin").withInitScript("init.sql");
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
@@ -71,30 +73,48 @@ public class GetAllUsersTest {
     public void getAllUsers() throws Exception {
         testUtils.addUsersToDatabase(3);
         userStorage.setCurrentUser("test1", "user1@test.com", "UUID1", true, 1L);
-        assertEquals(3, userService.getUsers().size());
+
+        ResponseEntity<ApiResponseDto<?>> response = userService.getUsers();
+
+        assertEquals(200, response.getStatusCodeValue());
+        List<UserDto> usersList = new ArrayList<>();
+        usersList.add(testUtils.generateUserDaoWithId(1L).toUserDto());
+        usersList.add(testUtils.generateUserDaoWithId(2L).toUserDto());
+        usersList.add(testUtils.generateUserDaoWithId(3L).toUserDto());
+        List<UserDto> receivedUsersList = (List<UserDto>) requireNonNull(userService.getUsers().getBody()).getData();
+        for (int i = 0; i < receivedUsersList.size(); i++) {
+            assertTrue(testUtils.areObjectEqual(usersList.get(i), receivedUsersList.get(i)));
+        }
     }
 
     @Test
     public void getUsers_ReturnsEmptyListWhenNoUsers() {
-        assertTrue(userService.getUsers().isEmpty());
+        List<UserDto> users = (List<UserDto>) requireNonNull(userService.getUsers().getBody()).getData();
+
+        assertTrue(users.isEmpty());
     }
 
     @Test
     public void getUsers_ReturnsSingleUserWhenOneUserExists() {
         testUtils.addUsersToDatabase(1);
-        assertEquals(1, userService.getUsers().size());
+        List<UserDto> users = (List<UserDto>) requireNonNull(userService.getUsers().getBody()).getData();
+
+        assertEquals(1, users.size());
     }
 
     @Test
     public void getUsers_ReturnsMultipleUsersWhenMultipleUsersExist() {
         testUtils.addUsersToDatabase(3);
-        assertEquals(3, userService.getUsers().size());
+        List<UserDto> users = (List<UserDto>) requireNonNull(userService.getUsers().getBody()).getData();
+
+        assertEquals(3, users.size());
     }
 
     @Test
     public void getUsers_ReturnsCorrectUsers() {
         testUtils.addUsersToDatabase(2);
-        ArrayList<UserDto> users = new ArrayList<>(userService.getUsers());
+        List<UserDto> users = (List<UserDto>) requireNonNull(userService.getUsers().getBody()).getData();
+
         assertEquals(2, users.size());
         assertTrue(testUtils.areObjectEqual(users.get(0), testUtils.generateUserDaoWithId(1L).toUserDto()));
         assertTrue(testUtils.areObjectEqual(users.get(1), testUtils.generateUserDaoWithId(2L).toUserDto()));
