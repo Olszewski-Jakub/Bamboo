@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@SuppressWarnings("resource")
 public class AddPandaDeviceServiceTest {
 
     @Autowired
@@ -69,7 +70,7 @@ public class AddPandaDeviceServiceTest {
         testUtils.setUserStorageByUserId(1L, true);
         registerPandaService.addPandaDevice(testUtils.generateRegisterPandaWithId(1L));
         PandaDao expectedPandaDao = testUtils.generatePandaDaoWithId(1L);
-        PandaDao actualPandaDao = pandaRepository.findById(1L).get();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") PandaDao actualPandaDao = pandaRepository.findById(1L).get();
         assertEquals(1, pandaRepository.count());
         assertEquals(expectedPandaDao.getId(), actualPandaDao.getId());
         assertEquals(expectedPandaDao.getUuid(), actualPandaDao.getUuid());

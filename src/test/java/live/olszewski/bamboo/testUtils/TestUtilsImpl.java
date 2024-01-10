@@ -1,6 +1,7 @@
 package live.olszewski.bamboo.testUtils;
 
 import live.olszewski.bamboo.apiKeys.ApiKeysRepository;
+import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.panda.objects.PandaDao;
@@ -9,6 +10,7 @@ import live.olszewski.bamboo.services.uuid.UUIDService;
 import live.olszewski.bamboo.user.UserDao;
 import live.olszewski.bamboo.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -176,5 +178,10 @@ public class TestUtilsImpl implements TestUtils {
         return objectList.stream()
                 .map(mapper)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ApiResponseDto<?> deserialize(ResponseEntity<ApiResponseDto<?>> responseEntity) {
+        return responseEntity.getBody();
     }
 }

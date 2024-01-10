@@ -19,12 +19,15 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@SuppressWarnings("resource")
 public class CurrentUserDetailsTest {
 
     @Autowired
@@ -35,7 +38,6 @@ public class CurrentUserDetailsTest {
 
     @Autowired
     private TestUtils testUtils;
-
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
@@ -72,11 +74,13 @@ public class CurrentUserDetailsTest {
         userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
         testUtils.addUsersToDatabase(1);
         ResponseEntity<ApiResponseDto<?>> actualUser = userService.currentUserDetails();
-        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), actualUser.getBody().getData()));
+        assertTrue(testUtils.areObjectEqual(userDao.toUserDto(), Objects.requireNonNull(actualUser.getBody()).getData()));
     }
 
     @Test
     public void currentUserDetails_ThrowsExceptionWhenUserDoesNotExist() {
-        assertThrows(IllegalStateException.class, () -> userService.currentUserDetails());
+        ResponseEntity<ApiResponseDto<?>> response = userService.currentUserDetails();
+        assertEquals(404, Objects.requireNonNull(response.getBody()).getStatusCode());
+        assertEquals("User with email user1@test.com does not exist", response.getBody().getMessage());
     }
 }
