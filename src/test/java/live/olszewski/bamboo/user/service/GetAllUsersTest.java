@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "resource"})
+
 public class GetAllUsersTest {
 
     @Autowired
@@ -70,13 +71,13 @@ public class GetAllUsersTest {
 
 
     @Test
-    public void getAllUsers() throws Exception {
+    public void getAllUsers() {
         testUtils.addUsersToDatabase(3);
         userStorage.setCurrentUser("test1", "user1@test.com", "UUID1", true, 1L);
 
         ResponseEntity<ApiResponseDto<?>> response = userService.getUsers();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, requireNonNull(response.getBody()).getStatusCode());
         List<UserDto> usersList = new ArrayList<>();
         usersList.add(testUtils.generateUserDaoWithId(1L).toUserDto());
         usersList.add(testUtils.generateUserDaoWithId(2L).toUserDto());

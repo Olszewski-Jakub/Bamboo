@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @Testcontainers
+@SuppressWarnings("resource")
 public class DeleteUserControllerTest {
 
     @Autowired
@@ -62,7 +63,7 @@ public class DeleteUserControllerTest {
 
     @Test
     public void deleteUser_whenUserExists_userIsDeleted() throws Exception {
-        Long userId = 1L;
+        long userId = 1L;
         testUtils.addUsersToDatabase(1);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/user/" + userId))
                 .andExpect(status().isOk());

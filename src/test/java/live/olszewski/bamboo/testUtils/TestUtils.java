@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public interface TestUtils {
 
     void clearAllDatabases();
@@ -31,11 +32,10 @@ public interface TestUtils {
     <T> List<T> mapToModelList(List<Object> objectList, Function<Object, T> mapper);
 
 
-    public Function<Object, UserDto> USER_DTO_FUNCTION = object -> {
+    Function<Object, UserDto> USER_DTO_FUNCTION = object -> {
         // Convert object to UserDao
-        UserDto userDto = new UserDto();
         // Set properties of userDao based on object
-        return userDto;
+        return new UserDto();
     };
 
     ApiResponseDto<?> deserialize(ResponseEntity<ApiResponseDto<?>> responseEntity);

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@SuppressWarnings("resource")
 public class GetUserByIdTest {
 
     @Autowired
