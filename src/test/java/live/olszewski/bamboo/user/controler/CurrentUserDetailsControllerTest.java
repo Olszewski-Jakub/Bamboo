@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @Testcontainers
+@SuppressWarnings("resource")
 public class CurrentUserDetailsControllerTest {
 
     @Autowired

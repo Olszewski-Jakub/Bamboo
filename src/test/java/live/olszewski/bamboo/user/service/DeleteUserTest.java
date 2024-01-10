@@ -17,12 +17,15 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@SuppressWarnings("resource")
 public class DeleteUserTest {
 
     @Autowired
@@ -73,7 +76,7 @@ public class DeleteUserTest {
     public void deleteUser_ThrowsExceptionWhenUserDoesNotExist() {
 
         ResponseEntity<ApiResponseDto<?>> response = userService.deleteUser(100L);
-        assertEquals(404, response.getBody().getStatusCode());
+        assertEquals(404, Objects.requireNonNull(response.getBody()).getStatusCode());
         assertEquals("User with id 100 does not exist", response.getBody().getMessage());
     }
 
