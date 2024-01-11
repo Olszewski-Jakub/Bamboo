@@ -11,49 +11,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserStorage userStorage;
+    private final ApiResponseBuilder builder;
+    private final MessageService messageService;
 
     @Autowired
-    private UserStorage userStorage;
-
-    @Autowired
-    private ApiResponseBuilder builder;
-
-    @Autowired
-    private MessageService messageService;
+    public UserServiceImpl(UserRepository userRepository, UserStorage userStorage, ApiResponseBuilder builder, MessageService messageService) {
+        this.userRepository = userRepository;
+        this.userStorage = userStorage;
+        this.builder = builder;
+        this.messageService = messageService;
+    }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getUsers() {
-        if (!userStorage.isAdministrator())
+        if (userHasAdminPrivileges())
             return builder.error().code401(messageService.getMessage("user.not.administrator"));
-        return builder.success().code200("asd", userRepository.findAll().stream().map(UserDao::toUserDto).toList());
+        return builder.success().code200("asd", retrieveAllUsersFromDatabase());
     }
 
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> addNewUser(RegisterUser registerUser) {
-        Optional<UserDao> userOptional = userRepository.findUserByEmail(registerUser.getEmail());
-        if (userOptional.isPresent()) {
+        if (doesUserExist(registerUser.getEmail())) {
             return builder.error().code409(messageService.getMessage("user.email.exists", registerUser.getEmail()));
         }
-        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                .setEmail(registerUser.getEmail())
-                .setEmailVerified(false)
-                .setPassword(registerUser.getPassword())
-                .setDisplayName(registerUser.getName() + " " + registerUser.getSurname());
-
+        UserRecord.CreateRequest request = createNewUserRequest(registerUser);
         try {
-            UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
-            UserDao userDao = new UserDao(userRecord.getUid(), registerUser.getName(), registerUser.getSurname(), registerUser.getEmail());
-            userRepository.save(userDao);
-            System.out.println(userDao);
+            createNewUserInAuthProviderService(registerUser, request);
         } catch (FirebaseAuthException e) {
             builder.error().code500(messageService.getMessage("internal.server.error", e.getMessage()));
         }
@@ -62,57 +55,50 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> currentUserDetails() {
-        Optional<UserDao> userOptional = userRepository.findUserByEmail(userStorage.getCurrentUserEmail());
-        if (!userOptional.isPresent()) {
-            return builder.error().code404(messageService.getMessage("user.not.found", userStorage.getCurrentUserEmail()));
+        Optional<UserDao> userOptional = retrieveUserOptionalFromDatabase(getUserEmailFromStorage());
+        if (userOptional.isEmpty()) {
+            return builder.error().code404(messageService.getMessage("user.not.found", getUserEmailFromStorage()));
         }
-        return builder.success().code200(messageService.getMessage("user.details", userStorage.getCurrentUserEmail()), userOptional.get().toUserDto());
+        return builder.success().code200(messageService.getMessage("user.details", getUserEmailFromStorage()), userOptional.get().toUserDto());
     }
 
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> deleteUser(Long id) {
-        boolean exists = userRepository.existsById(id);
-        if (!exists) {
-            return builder.error().code404(messageService.getMessage("user.not.found.id", id));
-        }
-        userRepository.deleteById(id);
-        return builder.success().code200(messageService.getMessage("user.removed", id), null);
+        return Optional.of(doesUserExist(id)).filter(Boolean::booleanValue).map(exists -> {
+            deleteUserFromDatabase(id);
+            return builder.success().code200(messageService.getMessage("user.removed", id), null);
+        }).orElseGet(() -> builder.error().code404(messageService.getMessage("user.not.found.id", id)));
     }
 
 
     @Override
     public Long getPandaOwner() {
-        UserDao userDao = userRepository.findUserByEmail(userStorage.getCurrentUserEmail()).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
-        return userDao.getId();
+        return retrieveUserDtoFromDatabase(getUserEmailFromStorage()).getId();
     }
 
 
     @Override
     public Boolean isAdministrator(String email) {
-        UserDao userDao = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
-        return userDao.getAdministrator();
+        return retrieveUserDtoFromDatabase(email).getAdministrator();
     }
 
 
     @Override
     public Long getUserId(String email) {
-        UserDao userDao = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("User with email " + userStorage.getCurrentUserEmail() + " does not exists"));
-        return userDao.getId();
+        return retrieveUserDtoFromDatabase(email).getId();
     }
 
 
     @Override
     public String getUserEmailById(Long id) {
-        UserDao userDao = userRepository.findUserById(id).orElseThrow(() -> new IllegalStateException("User with id " + id + " does not exists"));
-        return userDao.getEmail();
+        return retrieveUserDtoFromDatabase(id).getEmail();
     }
 
 
     @Override
     public UserDto getUserById(Long id) {
-        UserDao userDao = userRepository.findUserById(id).orElseThrow(() -> new IllegalStateException("User with id " + id + " does not exists"));
-        return userDao.toUserDto();
+        return retrieveUserDtoFromDatabase(id);
     }
 
 
@@ -121,4 +107,62 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsById(id);
     }
 
+    private String getUserEmailFromStorage() {
+        return userStorage.getCurrentUserEmail();
+    }
+
+    private UserDto retrieveUserDtoFromDatabase(Object parameter) {
+        UserDao userDao = findUser(parameter);
+        if (userDao == null) {
+            throw new IllegalStateException("User does not exist");
+        }
+        return userDao.toUserDto();
+    }
+
+    private UserDao findUser(Object parameter) {
+        if (parameter instanceof Long) {
+            return userRepository.findUserById((Long) parameter).orElse(null);
+        } else if (parameter instanceof String) {
+            return userRepository.findUserByEmail((String) parameter).orElse(null);
+        }
+        return null;
+    }
+
+    private Optional<UserDao> retrieveUserOptionalFromDatabase(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
+    private void deleteUserFromDatabase(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    private Boolean doesUserExist(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    private Boolean doesUserExist(String email) {
+        return userRepository.existsById(getUserId(email));
+    }
+
+    private UserRecord.CreateRequest createNewUserRequest(RegisterUser registerUser) {
+        return new UserRecord.CreateRequest().setEmail(registerUser.getEmail()).setEmailVerified(false).setPassword(registerUser.getPassword()).setDisplayName(registerUser.getName() + " " + registerUser.getSurname());
+    }
+
+    private void createNewUserInAuthProviderService(RegisterUser registerUser, UserRecord.CreateRequest request) throws FirebaseAuthException {
+        UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
+        UserDao userDao = new UserDao(userRecord.getUid(), registerUser.getName(), registerUser.getSurname(), registerUser.getEmail());
+        saveUserInDatabase(userDao);
+    }
+
+    private void saveUserInDatabase(UserDao userDao) {
+        userRepository.save(userDao);
+    }
+
+    private Boolean userHasAdminPrivileges() {
+        return userStorage.isAdministrator();
+    }
+
+    private List<UserDto> retrieveAllUsersFromDatabase() {
+        return userRepository.findAll().stream().map(UserDao::toUserDto).toList();
+    }
 }
