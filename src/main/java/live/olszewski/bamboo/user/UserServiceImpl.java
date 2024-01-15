@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getUsers() {
-        if (userHasAdminPrivileges())
+        if (!userHasAdminPrivileges())
             return builder.error().code401(messageService.getMessage("user.not.administrator"));
         return builder.success().code200("asd", retrieveAllUsersFromDatabase());
     }

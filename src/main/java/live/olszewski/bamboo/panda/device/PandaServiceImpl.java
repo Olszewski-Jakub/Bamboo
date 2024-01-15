@@ -35,7 +35,7 @@ public class PandaServiceImpl implements PandaService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getAllPandaDevices() {
-        if (doesUserHaveAdminPrivileges())
+        if (!userHaveAdminPrivileges())
             return builder.error().code403(messageService.getMessage("user.not.administrator"));
 
         return builder.success().code200(messageService.getMessage("panda.retrieve.all"), pandaRepository.findAll().stream().map(PandaDao::toDto).toList());
@@ -55,7 +55,7 @@ public class PandaServiceImpl implements PandaService {
         }).orElse(false);
     }
 
-    private Boolean doesUserHaveAdminPrivileges() {
+    private Boolean userHaveAdminPrivileges() {
         return userStorage.isAdministrator();
     }
 
