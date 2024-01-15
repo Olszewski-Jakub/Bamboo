@@ -30,20 +30,34 @@ public class PandaConnectionServiceImpl implements PandaConnectionService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithUuid(String UUID) {
-        Optional<PandaStatusDao> pandaStatusDao = pandaStatusRepository.findByUUID(UUID);
+        Optional<PandaStatusDao> pandaStatusDao = findPandaStatusOptional(UUID);
         return pandaStatusDao.map(statusDao -> builder.success().code200(messageService.getMessage("panda.status.retrieve.uuid", UUID), statusDao.toDto())).orElseGet(() -> builder.error().code404(messageService.getMessage("panda.status.not.found.uuid", UUID)));
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> checkConnectionStatusWithId(Long id) {
-        Optional<PandaStatusDao> pandaStatusDao = pandaStatusRepository.findById(id);
+        Optional<PandaStatusDao> pandaStatusDao = findPandaStatusOptional(id);
         return pandaStatusDao.map(statusDao -> builder.success().code200(messageService.getMessage("panda.status.retrieve.id", id), statusDao.toDto())).orElseGet(() -> builder.error().code404(messageService.getMessage("panda.status.not.found.id", id)));
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> sendConnectionStatus(String UUID, PandaStatus status) {
         PandaStatusDao pandaStatus = new PandaStatusDao(UUID, LocalDateTime.now(), status);
-        pandaStatusRepository.save(pandaStatus);
+        savePandaStatus(pandaStatus);
         return builder.success().code200(messageService.getMessage("panda.status.send", UUID), null);
     }
+
+    private void savePandaStatus(PandaStatusDao pandaStatus) {
+        pandaStatusRepository.save(pandaStatus);
+    }
+
+    private Optional<PandaStatusDao> findPandaStatusOptional(Object parameter) {
+        if (parameter instanceof String) {
+            return pandaStatusRepository.findByUUID((String) parameter);
+        } else if (parameter instanceof Long) {
+            return pandaStatusRepository.findById((Long) parameter);
+        }
+        return Optional.empty();
+    }
 }
+

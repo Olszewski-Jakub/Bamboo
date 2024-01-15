@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.panda.dataPackets.objects;
+package live.olszewski.bamboo.panda.dataPacketCollection.objects;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

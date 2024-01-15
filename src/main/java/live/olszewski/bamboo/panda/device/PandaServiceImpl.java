@@ -6,33 +6,36 @@ import live.olszewski.bamboo.apiResponse.MessageService;
 import live.olszewski.bamboo.auth.userStorage.UserStorage;
 import live.olszewski.bamboo.panda.PandaRepository;
 import live.olszewski.bamboo.panda.objects.PandaDao;
+import live.olszewski.bamboo.panda.objects.PandaDto;
 import live.olszewski.bamboo.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PandaServiceImpl implements PandaService {
 
-    @Autowired
-    private PandaRepository pandaRepository;
+
+    private final PandaRepository pandaRepository;
+    private final UserService userService;
+    private final UserStorage userStorage;
+    private final ApiResponseBuilder builder;
+    private final MessageService messageService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserStorage userStorage;
-
-    @Autowired
-    private ApiResponseBuilder builder;
-
-    @Autowired
-    private MessageService messageService;
-
+    public PandaServiceImpl(PandaRepository pandaRepository, UserService userService, UserStorage userStorage, ApiResponseBuilder builder, MessageService messageService) {
+        this.pandaRepository = pandaRepository;
+        this.userService = userService;
+        this.userStorage = userStorage;
+        this.builder = builder;
+        this.messageService = messageService;
+    }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getAllPandaDevices() {
-        if (!userStorage.isAdministrator())
+        if (!userHaveAdminPrivileges())
             return builder.error().code403(messageService.getMessage("user.not.administrator"));
 
         return builder.success().code200(messageService.getMessage("panda.retrieve.all"), pandaRepository.findAll().stream().map(PandaDao::toDto).toList());
@@ -40,8 +43,7 @@ public class PandaServiceImpl implements PandaService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getPandaDevicesByOwner() {
-        var ownedPandas = pandaRepository.findDeviceByOwner(userService.getPandaOwner()).stream().map(PandaDao::toDto).toList();
-        return builder.success().code200(messageService.getMessage("panda.retrieve.by.owner", userService.getPandaOwner()), ownedPandas);
+        return builder.success().code200(messageService.getMessage("panda.retrieve.by.owner", userService.getPandaOwner()), getAllPandaDeviceByUserFromDatabase());
     }
 
     @Override
@@ -51,6 +53,14 @@ public class PandaServiceImpl implements PandaService {
             pandaRepository.save(panda);
             return true;
         }).orElse(false);
+    }
+
+    private Boolean userHaveAdminPrivileges() {
+        return userStorage.isAdministrator();
+    }
+
+    private List<PandaDto> getAllPandaDeviceByUserFromDatabase() {
+        return pandaRepository.findDeviceByOwner(userService.getPandaOwner()).stream().map(PandaDao::toDto).toList();
     }
 
 }

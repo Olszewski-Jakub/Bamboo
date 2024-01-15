@@ -1,6 +1,6 @@
-package live.olszewski.bamboo.panda.dataPackets;
+package live.olszewski.bamboo.panda.dataPacketCollection;
 
-import live.olszewski.bamboo.panda.dataPackets.objects.DataPacketDao;
+import live.olszewski.bamboo.panda.dataPacketCollection.objects.DataPacketDao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

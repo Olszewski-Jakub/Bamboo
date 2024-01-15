@@ -1,12 +1,12 @@
-package live.olszewski.bamboo.panda.dataPackets.collection;
+package live.olszewski.bamboo.panda.dataPacketCollection.collection;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseBuilder;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import live.olszewski.bamboo.apiResponse.MessageService;
 import live.olszewski.bamboo.auth.pandaStorage.PandaStorage;
 import live.olszewski.bamboo.panda.PandaRepository;
-import live.olszewski.bamboo.panda.dataPackets.DataPacketRepository;
-import live.olszewski.bamboo.panda.dataPackets.objects.DataPacketDao;
+import live.olszewski.bamboo.panda.dataPacketCollection.DataPacketRepository;
+import live.olszewski.bamboo.panda.dataPacketCollection.objects.DataPacketDao;
 import live.olszewski.bamboo.panda.objects.PandaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
-package live.olszewski.bamboo.panda.dataPackets.objects;
+package live.olszewski.bamboo.panda.dataPacketCollection.objects;
 
-import live.olszewski.bamboo.panda.dataPackets.collection.DataCollectionService;
+import live.olszewski.bamboo.panda.dataPacketCollection.collection.DataCollectionService;
 
 /**
  * This class represents a data packet received from a Panda device.
