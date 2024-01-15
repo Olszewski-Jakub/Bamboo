@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.panda.dataPackets.collection;
+package live.olszewski.bamboo.panda.dataPacketCollection.collection;
 
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import org.springframework.http.ResponseEntity;

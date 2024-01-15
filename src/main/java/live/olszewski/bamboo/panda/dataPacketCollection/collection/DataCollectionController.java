@@ -1,4 +1,4 @@
-package live.olszewski.bamboo.panda.dataPackets.collection;
+package live.olszewski.bamboo.panda.dataPacketCollection.collection;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,14 +43,6 @@ public class DataCollectionController {
                     @ApiResponse(
                             responseCode = "500",
                             description = "Device with this parameters already exists"
-                    )
-            },
-            parameters = {
-                    @Parameter(
-                            name = "dataPacketReceive",
-                            description = "Data packet",
-                            required = true,
-                            example = "100"
                     )
             }
     )

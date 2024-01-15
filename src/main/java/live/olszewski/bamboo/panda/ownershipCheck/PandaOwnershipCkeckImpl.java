@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class PandaOwnershipCkeckImpl implements PandaOwnershipCkeck {
 
-    @Autowired
-    UserStorage userStorage;
+    private final UserStorage userStorage;
+    private final PandaRepository pandaRepository;
 
     @Autowired
-    private PandaRepository pandaRepository;
-
+    public PandaOwnershipCkeckImpl(UserStorage userStorage, PandaRepository pandaRepository) {
+        this.userStorage = userStorage;
+        this.pandaRepository = pandaRepository;
+    }
     @Override
     public boolean isPandaOwner(Long pandaId) {
         return pandaRepository.findDeviceById(pandaId)

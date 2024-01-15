@@ -16,46 +16,61 @@ import java.util.Optional;
 @Service
 public class RegisterPandaServiceImpl implements RegisterPandaService {
 
-    @Autowired
-    private PandaRepository pandaRepository;
+    private final PandaRepository pandaRepository;
+    private final UUIDService uuidService;
+    private final UserService userService;
+    private final ApiResponseBuilder builder;
+    private final MessageService messageService;
 
     @Autowired
-    private UUIDService uuidService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ApiResponseBuilder builder;
-
-    @Autowired
-    private MessageService messageService;
-
+    public RegisterPandaServiceImpl(PandaRepository pandaRepository, UUIDService uuidService, UserService userService, ApiResponseBuilder builder, MessageService messageService) {
+        this.pandaRepository = pandaRepository;
+        this.uuidService = uuidService;
+        this.userService = userService;
+        this.builder = builder;
+        this.messageService = messageService;
+    }
     @Override
     public ResponseEntity<ApiResponseDto<?>> addPandaDevice(RegisterPanda registerPanda) {
+        PandaDao registerPandaDao = buildPandaModel(registerPanda);
+        Optional<PandaDao> registerPandaDaoOptional = pandaRepository.findDeviceByUUID(registerPandaDao.getUuid());
+        if (registerPandaDaoOptional.isPresent()) {
+            return builder.error().code409(messageService.getMessage("panda.exists.", registerPandaDao.getId()));
+        }
+
+        savePanda(registerPandaDao);
+        return builder.success().code200(messageService.getMessage("panda.created", registerPandaDao.getId()), null);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> deletePandaDevice(Long id) {
+        return Optional.of(retrievePandaFromDatabase(id))
+                .map(panda -> {
+                    deletePanda(id);
+                    return builder.success().code200(messageService.getMessage("panda.deleted", id), null);
+                })
+                .orElseGet(() -> builder.error().code404(messageService.getMessage("panda.not.found", id)));
+    }
+
+    private void savePanda(PandaDao registerPandaDao) {
+        pandaRepository.save(registerPandaDao);
+    }
+
+    private void deletePanda(Long id) {
+        pandaRepository.deleteById(id);
+    }
+
+    private Optional<PandaDao> retrievePandaFromDatabase(Long id) {
+        return pandaRepository.findById(id);
+    }
+
+    private PandaDao buildPandaModel(RegisterPanda registerPanda) {
         PandaDao registerPandaDao = new PandaDao();
         registerPandaDao.setLocation(registerPanda.getLocation());
         registerPandaDao.setName(registerPanda.getName());
         registerPandaDao.setStatus(true);
         registerPandaDao.setOwner(userService.getPandaOwner());
         registerPandaDao.setUuid(uuidService.generateUUIDFromString(registerPandaDao.valuesForUuidGeneration()).toString());
-        Optional<PandaDao> registerPandaDaoOptional = pandaRepository.findDeviceByUUID(registerPandaDao.getUuid());
-        if (registerPandaDaoOptional.isPresent()) {
-            return builder.error().code409(messageService.getMessage("panda.exists.", registerPandaDao.getId()));
-        }
-
-        pandaRepository.save(registerPandaDao);
-        return builder.success().code200(messageService.getMessage("panda.created", registerPandaDao.getId()), null);
+        return registerPandaDao;
     }
-
-    @Override
-    public ResponseEntity<ApiResponseDto<?>> deletePandaDevice(Long id) {
-        boolean exists = pandaRepository.existsById(id);
-        if (!exists) {
-            return builder.error().code404(messageService.getMessage("panda.not.found", id));
-        }
-        pandaRepository.deleteById(id);
-        return builder.success().code200(messageService.getMessage("panda.deleted", id), null);
-    }
-
 }
