@@ -11,4 +11,18 @@ public interface SpaceService {
 
     ResponseEntity<ApiResponseDto<?>> addUserToSpace(String spaceId, String userId, String privilege);
 
+    ResponseEntity<ApiResponseDto<?>> removeUserFromSpace(String spaceId, String userId);
+
+    ResponseEntity<ApiResponseDto<?>> changeUserPrivilege(String spaceId, String userId, String privilege);
+
+    ResponseEntity<ApiResponseDto<?>> deleteSpace(String spaceId);
+
+    ResponseEntity<ApiResponseDto<?>> getSpaces();
+
+    ResponseEntity<ApiResponseDto<?>> getSpace(String spaceId);
+
+    ResponseEntity<ApiResponseDto<?>> myPrivileges(String spaceId);
+
+
+
 }

@@ -124,4 +124,52 @@ public class SpaceServiceImpl implements SpaceService {
         userPrivilegesRepository.save(userPrivilege);
         return builder.success().code200(messageService.getMessage("user.added.to.space", userId, spaceId), null);
     }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> removeUserFromSpace(String spaceId, String userId) {
+        // Check if user is space owner
+        Long requesterId = userStorage.getCurrentUserId();
+        if (userPrivilegesRepository.findBySpaceIdAndUserIdAndPrivileges(Long.valueOf(spaceId), requesterId, Privilege.OWNER).isEmpty()) {
+            return builder.error().code403(messageService.getMessage("space.not.owner", requesterId));
+        }
+        // Check if user exists
+        if (!userService.isValidUserById(Long.valueOf(userId))) {
+            return builder.error().code404(messageService.getMessage("user.not.found.id", userId));
+        }
+        // Check if user is in the space
+        List<UserPrivilegeDao> userPrivileges = userPrivilegesRepository.findBySpaceIdAndUserId(Long.valueOf(spaceId), Long.valueOf(userId));
+        if (userPrivileges.isEmpty()) {
+            return builder.error().code404(messageService.getMessage("user.not.in.space", userId, spaceId));
+        }
+        // Remove user privileges from the space with specific user ID
+        userPrivilegesRepository.deleteAll(userPrivileges);
+
+
+        return builder.success().code200(messageService.getMessage("user.removed.from.space", userId, spaceId), null);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> changeUserPrivilege(String spaceId, String userId, String privilege) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> deleteSpace(String spaceId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getSpaces() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getSpace(String spaceId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> myPrivileges(String spaceId) {
+        return null;
+    }
 }

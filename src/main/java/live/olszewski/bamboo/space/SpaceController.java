@@ -6,9 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import live.olszewski.bamboo.apiResponse.ApiResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "#{apiConfig.spacePath}")
@@ -35,13 +33,12 @@ public class SpaceController {
                     )
             }
     )
-
     public ResponseEntity<ApiResponseDto<?>> createSpace(String name) {
         return spaceService.createSpace(name);
     }
 
 
-    @PostMapping(path = "/getUsersAndPrivileges")
+    @GetMapping(path = "/getUsersAndPrivileges")
     @Operation(
             description = "Get users and their privileges for a space",
             responses = {
@@ -83,5 +80,27 @@ public class SpaceController {
     )
     public ResponseEntity<ApiResponseDto<?>> addUserToSpace(String spaceId, String userId, String privilege) {
         return spaceService.addUserToSpace(spaceId, userId, privilege);
+    }
+
+    @DeleteMapping(path = "/removeUser")
+    @Operation(
+            description = "Remove user from space",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Space with this name already exists"
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponseDto<?>> removeUserFromSpace(String spaceId, String userId) {
+        return spaceService.removeUserFromSpace(spaceId, userId);
     }
 }
