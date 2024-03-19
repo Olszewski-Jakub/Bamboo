@@ -83,4 +83,9 @@ public class ApiConfig {
     public String pandaDataCollectionPath() {
         return ROOT_PATH + "/panda/data/send";
     }
+
+    @Bean
+    public String spacePath() {
+        return ROOT_PATH + "/space";
+    }
 }

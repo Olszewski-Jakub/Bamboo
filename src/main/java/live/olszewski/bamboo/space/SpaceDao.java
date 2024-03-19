@@ -1,5 +1,6 @@
 package live.olszewski.bamboo.space;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -8,44 +9,43 @@ import java.util.List;
 @Table(name = "spaces")
 public class SpaceDao {
 
-
     @Id
     @SequenceGenerator(
             name = "space_sequence",
             sequenceName = "space_sequence",
             allocationSize = 1
     )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "space_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "space_sequence")
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "space")
-    private List<UserPrivilegesDao> userPrivileges;
+    @OneToMany(mappedBy = "space", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<UserPrivilegeDao> userPrivileges;
 
     @ElementCollection
-    private List<Long> pandaDevices;
+    private List<Long> pandaId;
 
-    @Column(nullable = false)
     private boolean status;
+
+    // constructors, getters, setters
 
     public SpaceDao() {
     }
 
-    public SpaceDao(Long id, String name, List<UserPrivilegesDao> userPrivileges, List<Long> pandaDevices, boolean status) {
+    public SpaceDao(Long id, String name, List<UserPrivilegeDao> userPrivileges, List<Long> pandaId, boolean status) {
         this.id = id;
         this.name = name;
         this.userPrivileges = userPrivileges;
-        this.pandaDevices = pandaDevices;
+        this.pandaId = pandaId;
         this.status = status;
     }
 
-    public SpaceDao(String name, List<UserPrivilegesDao> userPrivileges, List<Long> pandaDevices, boolean status) {
+    public SpaceDao(String name, List<UserPrivilegeDao> userPrivileges, List<Long> pandaId, boolean status) {
         this.name = name;
         this.userPrivileges = userPrivileges;
-        this.pandaDevices = pandaDevices;
+        this.pandaId = pandaId;
         this.status = status;
     }
 
@@ -65,20 +65,20 @@ public class SpaceDao {
         this.name = name;
     }
 
-    public List<UserPrivilegesDao> getUserPrivileges() {
+    public List<UserPrivilegeDao> getUserPrivileges() {
         return userPrivileges;
     }
 
-    public void setUserPrivileges(List<UserPrivilegesDao> userPrivileges) {
+    public void setUserPrivileges(List<UserPrivilegeDao> userPrivileges) {
         this.userPrivileges = userPrivileges;
     }
 
-    public List<Long> getPandaDevices() {
-        return pandaDevices;
+    public List<Long> getPandaId() {
+        return pandaId;
     }
 
-    public void setPandaDevices(List<Long> pandaDevices) {
-        this.pandaDevices = pandaDevices;
+    public void setPandaId(List<Long> pandaId) {
+        this.pandaId = pandaId;
     }
 
     public boolean isStatus() {

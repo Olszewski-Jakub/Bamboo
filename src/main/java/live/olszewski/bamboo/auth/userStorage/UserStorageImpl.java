@@ -1,11 +1,14 @@
 package live.olszewski.bamboo.auth.userStorage;
 
+import live.olszewski.bamboo.user.UserDao;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserStorageImpl implements UserStorage {
 
     private String currentUserName;
+
+    private String currentUserSurname;
     private String currentUserEmail;
     private String currentUserUuid;
 
@@ -39,8 +42,9 @@ public class UserStorageImpl implements UserStorage {
     }
 
     @Override
-    public void setCurrentUser(String name, String email, String uuid, Boolean isAdministrator, Long id) {
+    public void setCurrentUser(String name, String surname, String email, String uuid, Boolean isAdministrator, Long id) {
         this.currentUserName = name;
+        this.currentUserSurname = surname;
         this.currentUserEmail = email;
         this.currentUserUuid = uuid;
         this.isAdministrator = isAdministrator;
@@ -54,5 +58,10 @@ public class UserStorageImpl implements UserStorage {
         this.currentUserUuid = null;
         this.isAdministrator = null;
         this.id = null;
+    }
+
+    @Override
+    public UserDao getCurrentUser() {
+        return new UserDao(id, currentUserUuid, currentUserName, currentUserSurname, currentUserEmail, isAdministrator);
     }
 }

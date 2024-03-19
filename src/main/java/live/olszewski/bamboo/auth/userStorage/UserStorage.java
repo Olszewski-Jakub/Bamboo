@@ -1,5 +1,7 @@
 package live.olszewski.bamboo.auth.userStorage;
 
+import live.olszewski.bamboo.user.UserDao;
+
 /**
  * This interface defines methods for managing User objects in storage.
  */
@@ -49,10 +51,12 @@ public interface UserStorage {
      * @param isAdministrator The administrator status of the User object to set as the current User object.
      * @param id              The ID of the User object to set as the current User object.
      */
-    void setCurrentUser(String name, String email, String uuid, Boolean isAdministrator, Long id);
+    void setCurrentUser(String name, String surname, String email, String uuid, Boolean isAdministrator, Long id);
 
     /**
      * Clears the current User object.
      */
     void clearCurrentUser();
+
+    UserDao getCurrentUser();
 }

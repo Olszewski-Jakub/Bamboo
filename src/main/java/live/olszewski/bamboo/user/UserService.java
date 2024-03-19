@@ -86,4 +86,12 @@ public interface UserService {
      */
     Boolean isValidUserById(Long id);
 
+    /**
+     * Retrieves the surname of a user.
+     *
+     * @param id The ID of the user.
+     * @return The surname of the user.
+     */
+    String getUserSurnameById(Long id);
+
 }

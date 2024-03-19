@@ -71,7 +71,7 @@ public class GetUsersControllerTest {
     public void getUser_whenUserExists_returnsCorrectUser() throws Exception {
         testUtils.addUsersToDatabase(1);
         UserDao userDao = testUtils.generateUserDaoWithId(1L);
-        userStorage.setCurrentUser(userDao.getName(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
+        userStorage.setCurrentUser(userDao.getName(), userDao.getSurname(), userDao.getEmail(), userDao.getUID(), userDao.getAdministrator(), userDao.getId());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/user"))
                 .andExpect(status().isOk())

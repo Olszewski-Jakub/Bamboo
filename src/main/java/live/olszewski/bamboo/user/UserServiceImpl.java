@@ -107,6 +107,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsById(id);
     }
 
+    @Override
+    public String getUserSurnameById(Long id) {
+        return retrieveUserDtoFromDatabase(id).getSurname();
+    }
+
+
     private String getUserEmailFromStorage() {
         return userStorage.getCurrentUserEmail();
     }

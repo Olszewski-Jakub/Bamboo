@@ -30,6 +30,7 @@ public class RegisterPandaServiceImpl implements RegisterPandaService {
         this.builder = builder;
         this.messageService = messageService;
     }
+
     @Override
     public ResponseEntity<ApiResponseDto<?>> addPandaDevice(RegisterPanda registerPanda) {
         PandaDao registerPandaDao = buildPandaModel(registerPanda);

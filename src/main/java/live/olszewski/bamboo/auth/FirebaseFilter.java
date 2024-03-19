@@ -90,7 +90,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
      */
     private void setAuthenticationAndStoreUser(FirebaseToken decodedToken, String uid) {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(uid, null, null));
-        userStorage.setCurrentUser(decodedToken.getName(), decodedToken.getEmail(), uid, userService.isAdministrator(decodedToken.getEmail()), userService.getUserId(decodedToken.getEmail()));
+        userStorage.setCurrentUser(decodedToken.getName(), userService.getUserSurnameById(userService.getUserId(decodedToken.getEmail())), decodedToken.getEmail(), uid, userService.isAdministrator(decodedToken.getEmail()), userService.getUserId(decodedToken.getEmail()));
     }
 }
 
