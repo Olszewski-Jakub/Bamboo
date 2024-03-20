@@ -1,6 +1,7 @@
 package live.olszewski.bamboo.space;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -17,6 +18,12 @@ public interface UserPrivilegesRepository extends JpaRepository<UserPrivilegeDao
     // (userPrivilegesRepository.findBySpaceIdAndUserId(Long.valueOf(spaceId), Long.valueOf(userId)
     @Query("SELECT s FROM UserPrivilegeDao s WHERE s.space.id = ?1 AND s.userId = ?2")
     List<UserPrivilegeDao> findBySpaceIdAndUserId(Long spaceId, Long userId);
+
+    //userPrivilegesRepository.deleteBySpaceId(Long.valueOf(spaceId));
+    @Modifying
+    @Query("DELETE FROM UserPrivilegeDao u WHERE u.space.id = ?1")
+    void deleteBySpaceId(Long spaceId);
+
 
 
 }

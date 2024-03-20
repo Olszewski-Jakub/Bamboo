@@ -103,4 +103,136 @@ public class SpaceController {
     public ResponseEntity<ApiResponseDto<?>> removeUserFromSpace(String spaceId, String userId) {
         return spaceService.removeUserFromSpace(spaceId, userId);
     }
+
+    @PatchMapping(path = "/changeUserPrivilege")
+    @Operation(
+            description = "Change user privilege in space",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Space with this name already exists"
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponseDto<?>> changeUserPrivilege(String spaceId, String userId, String privilege) {
+        return spaceService.changeUserPrivilege(spaceId, userId, privilege);
+    }
+
+    @DeleteMapping(path = "/delete")
+    @Operation(
+            description = "Delete space",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Space with this name already exists"
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponseDto<?>> deleteSpace(String spaceId) {
+        return spaceService.deleteSpace(spaceId);
+    }
+
+    @GetMapping(path = "/getSpaces")
+    @Operation(
+            description = "Get all spaces",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Space with this name already exists"
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponseDto<?>> getSpaces() {
+        return spaceService.getSpaces();
+    }
+
+    @GetMapping(path = "/getMySpace")
+    @Operation(
+            description = "Get space by user id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Space with this name already exists"
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponseDto<?>> getMySpace() {
+        return spaceService.getMySpace();
+    }
+
+    @GetMapping(path = "/getSpace")
+    @Operation(
+            description = "Get space by space id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Space with this name already exists"
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponseDto<?>> getSpace(String spaceId) {
+        return spaceService.getSpace(spaceId);
+    }
+
+    @GetMapping(path = "/myPrivileges")
+    @Operation(
+            description = "Get user privileges for a space",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Success"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Space with this name already exists"
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponseDto<?>> myPrivileges(String spaceId) {
+        return spaceService.myPrivileges(spaceId);
+    }
 }

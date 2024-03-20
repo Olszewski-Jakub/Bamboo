@@ -19,6 +19,8 @@ public interface SpaceService {
 
     ResponseEntity<ApiResponseDto<?>> getSpaces();
 
+    ResponseEntity<ApiResponseDto<?>> getMySpace();
+
     ResponseEntity<ApiResponseDto<?>> getSpace(String spaceId);
 
     ResponseEntity<ApiResponseDto<?>> myPrivileges(String spaceId);

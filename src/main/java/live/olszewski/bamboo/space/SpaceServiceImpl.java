@@ -40,30 +40,6 @@ public class SpaceServiceImpl implements SpaceService {
     @Override
     public ResponseEntity<ApiResponseDto<?>> createSpace(String name) {
 
-//        // Create space
-//        SpaceDao spaceDao = new SpaceDao();
-//        spaceDao.setName(name);
-//        spaceDao.setStatus(true);
-//
-//// Create list of user privileges
-//        List<UserPrivilegesDao> userPrivileges = new ArrayList<>();
-//
-//// Create user privileges
-//        UserPrivilegesDao userPrivilegesDao = new UserPrivilegesDao();
-//        List<Privilege> privileges = new ArrayList<>();
-//        privileges.add(Privilege.OWNER);
-//        userPrivilegesDao.setUserId(userStorage.getCurrentUserId());
-//        userPrivilegesDao.setPrivileges(privileges);
-//
-//// Set the space for the user privileges
-//        userPrivilegesDao.setSpace(spaceDao);
-//
-//        userPrivileges.add(userPrivilegesDao);
-//
-//// Set the user privileges for the space
-//        spaceDao.setUserPrivileges(userPrivileges);
-//
-//// Save space
 //        spaceRepository.save(spaceDao);
 
         SpaceDao space = new SpaceDao();
@@ -155,21 +131,52 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> deleteSpace(String spaceId) {
-        return null;
+        if (spaceRepository.findById(Long.valueOf(spaceId)).isEmpty()) {
+            return builder.error().code404(messageService.getMessage("space.not.found.id", spaceId));
+        }
+        // Is current user administator of the space
+        if (userPrivilegesRepository.findBySpaceIdAndUserIdAndPrivileges(Long.valueOf(spaceId), userStorage.getCurrentUserId(), Privilege.OWNER).isEmpty()) {
+            return builder.error().code403(messageService.getMessage("space.not.owner", userStorage.getCurrentUserId()));
+        }
+        // Delete the space
+        spaceRepository.deleteById(Long.valueOf(spaceId));
+        //Delete all user privileges for the space
+        userPrivilegesRepository.deleteBySpaceId(Long.valueOf(spaceId));
+        return builder.success().code200(messageService.getMessage("space.deleted", spaceId), null);
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getSpaces() {
-        return null;
+        //Check if user is an administrator
+        if (!userStorage.isAdministrator()) {
+            return builder.error().code403(messageService.getMessage("user.not.administrator"));
+        }
+        //Get all spaces
+        List<SpaceDao> spaces = spaceRepository.findAll();
+        return builder.success().code200(messageService.getMessage("spaces.found"), spaces);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getMySpace() {
+        // Get all spaces by user id
+        List<SpaceDao> spaces = spaceRepository.findByUserId(userStorage.getCurrentUserId());
+        return builder.success().code200(messageService.getMessage("spaces.found"), spaces);
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getSpace(String spaceId) {
-        return null;
+        // Get the space by id
+        SpaceDao space = spaceRepository.findById(Long.valueOf(spaceId)).orElse(null);
+        if (space == null) {
+            return builder.error().code404(messageService.getMessage("space.not.found.id", spaceId));
+        }
+        return builder.success().code200(messageService.getMessage("space.found", spaceId), space);
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> myPrivileges(String spaceId) {
-        return null;
+        // Get the user privileges for the space
+        List<UserPrivilegeDao> userPrivileges = userPrivilegesRepository.findBySpaceIdAndUserId(Long.valueOf(spaceId), userStorage.getCurrentUserId());
+        return builder.success().code200(messageService.getMessage("space.users.privileges", spaceId), userPrivileges);
     }
 }
